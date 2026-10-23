@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Administrar Preguntas Frecuentes{% endblock %}
+{% block content %}
+<section class="section-space">
+    <div class="container">
+        <h1 class="mb-4">❓ Gestionar Preguntas Frecuentes</h1>
+        <a href="{{ url_for('faq_nuevo') }}" class="btn btn-primary mb-3">+ Nueva Pregunta</a>
+        <a href="{{ url_for('faq') }}" class="btn btn-outline-modern mb-3">Ver público</a>
+        <hr>
+        {% if preguntas %}
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Categoría</th>
+                        <th>Pregunta</th>
+                        <th>Orden</th>
+                        <th>Visible</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in preguntas %}
+                    <tr>
+                        <td>{{ p.categoria }}</td>
+                        <td>{{ p.pregunta }}</td>
+                        <td>{{ p.orden_visual }}</td>
+                        <td>{% if p.visible %}✅{% else %}❌{% endif %}</td>
+                        <td>
+                            <a href="{{ url_for('faq_editar', id_p=p.id_faq) }}" class="btn btn-sm btn-outline-primary">Editar</a>
+                            <form method="post" action="{{ url_for('faq_eliminar', id_p=p.id_faq) }}" style="display:inline" onsubmit="return confirm('¿Eliminar?')">
+                                <button class="btn btn-sm btn-outline-danger">Borrar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-secondary">No hay preguntas aún. <a href="{{ url_for('faq_nuevo') }}">Crear la primera</a>.</p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

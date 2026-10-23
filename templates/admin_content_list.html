@@ -1,0 +1,19 @@
+{% extends "admin_base.html" %}
+{% block title %}{{ config.titulo }} | SMS Admin{% endblock %}
+{% block heading %}{{ config.titulo }}{% endblock %}
+{% block content %}
+<div class="admin8-page-head"><div><span>Contenido público</span><h1>{{ config.titulo }}</h1><p>Agrega, edita o elimina registros visibles en el portal.</p></div><a class="admin8-primary-btn" href="{{ url_for('admin_contenido_form', tipo=tipo) }}"><i class="bi bi-plus-lg"></i> Nuevo</a></div>
+<div class="admin8-table-card"><table class="admin8-table">
+<thead><tr><th>Registro</th><th>Información</th><th>Estado/fecha</th><th>Acciones</th></tr></thead>
+<tbody>
+{% for r in registros %}
+<tr>
+<td><strong>{{ r.get('nombre') or r.get('titulo') or r.get('plataforma') }}</strong></td>
+<td><span>{{ r.get('descripcion') or r.get('resumen') or r.get('categoria') or r.get('url_enlace') or '' }}</span></td>
+<td><small>{{ r.get('estado') or r.get('fecha_publicacion') or r.get('fecha_logro') or ('Visible' if r.get('visible') else '') }}</small></td>
+<td><div class="admin8-actions"><a href="{{ url_for('admin_contenido_form', tipo=tipo, item_id=r[config.pk]) }}"><i class="bi bi-pencil"></i></a>
+<form method="post" action="{{ url_for('admin_contenido_eliminar', tipo=tipo, item_id=r[config.pk]) }}" onsubmit="return confirm('¿Eliminar este registro?');"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button><i class="bi bi-trash"></i></button></form></div></td>
+</tr>
+{% else %}<tr><td colspan="4" class="text-center py-5 text-secondary">No hay registros.</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

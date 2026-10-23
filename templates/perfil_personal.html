@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}{{ persona.nombres }} {{ persona.apellidos }} | Equipo SMS{% endblock %}
+{% block content %}
+<section class="profile8-hero">
+  <div class="container">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb breadcrumb-modern achievements-breadcrumb"><li class="breadcrumb-item"><a href="{{ url_for('inicio') }}">Inicio</a></li><li class="breadcrumb-item"><a href="{{ url_for('equipo') }}">Equipo</a></li><li class="breadcrumb-item active">Perfil</li></ol></nav>
+    <div class="profile8-layout">
+      <div class="profile8-photo" data-reveal>{% if persona.foto_url %}<img src="{{ url_for('static', filename=persona.foto_url.replace('/static/','')) if persona.foto_url.startswith('/static/') else persona.foto_url }}" alt="{{ persona.nombres }} {{ persona.apellidos }}">{% else %}<span>{{ persona.nombres[:1] }}{{ persona.apellidos[:1] }}</span>{% endif %}</div>
+      <div class="profile8-copy" data-reveal>
+        <span class="gallery5-kicker">{{ persona.area or persona.tipo }}</span>
+        <h1>{{ persona.nombres }} {{ persona.apellidos }}</h1>
+        <h2>{{ persona.cargo }}</h2>
+        <p>{{ persona.biografia or 'Perfil institucional disponible para consulta de la comunidad educativa.' }}</p>
+        <div class="profile8-tags">
+          {% if persona.formacion %}<span><i class="bi bi-mortarboard"></i> {{ persona.formacion }}</span>{% endif %}
+          {% if persona.anios_experiencia %}<span><i class="bi bi-calendar-check"></i> {{ persona.anios_experiencia }} años de experiencia</span>{% endif %}
+          {% if persona.correo %}<span><i class="bi bi-envelope"></i> {{ persona.correo }}</span>{% endif %}
+        </div>
+        <a href="{{ url_for('equipo') }}" class="btn home6-map-btn"><i class="bi bi-arrow-left"></i> Volver al equipo</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

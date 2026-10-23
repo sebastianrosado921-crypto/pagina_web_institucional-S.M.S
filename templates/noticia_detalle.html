@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}{{ noticia.titulo }} | IED Santa Magdalena Sofía{% endblock %}
+{% block content %}
+<section class="article9-hero {% if noticia.imagen_url or noticia.video_url %}has-media{% endif %}">
+  {% if noticia.video_url %}<video class="article9-bg" autoplay muted loop playsinline preload="metadata" {% if noticia.imagen_url %}poster="{{ url_for('static', filename=noticia.imagen_url.replace('/static/','')) if noticia.imagen_url.startswith('/static/') else noticia.imagen_url }}"{% endif %}><source src="{{ url_for('static', filename=noticia.video_url.replace('/static/','')) if noticia.video_url.startswith('/static/') else noticia.video_url }}"></video>{% elif noticia.imagen_url %}<img class="article9-bg" src="{{ url_for('static', filename=noticia.imagen_url.replace('/static/','')) if noticia.imagen_url.startswith('/static/') else noticia.imagen_url }}" alt="">{% endif %}
+  <div class="article9-overlay"></div>
+  <div class="container position-relative">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb breadcrumb-modern breadcrumb-news"><li class="breadcrumb-item"><a href="{{ url_for('inicio') }}">Inicio</a></li><li class="breadcrumb-item"><a href="{{ url_for('noticias') }}">Actualidad</a></li><li class="breadcrumb-item active">Detalle</li></ol></nav>
+    <div class="article9-copy" data-reveal><span class="gallery5-kicker"><i class="bi {{ 'bi-calendar-event' if noticia.tipo_contenido=='EVENTO' else ('bi-megaphone' if noticia.tipo_contenido=='COMUNICADO' else 'bi-newspaper') }}"></i> {{ noticia.tipo_contenido|title }}</span><h1>{{ noticia.titulo }}</h1><p>{{ noticia.resumen }}</p><div><span><i class="bi bi-calendar3"></i> {{ noticia.fecha_publicacion.strftime('%d/%m/%Y') if noticia.fecha_publicacion else 'Fecha institucional' }}</span><span><i class="bi bi-geo-alt"></i> Barranquilla</span>{% if noticia.video_url %}<span><i class="bi bi-play-btn"></i> Incluye video</span>{% endif %}</div></div>
+  </div>
+</section>
+
+<section class="article9-section"><div class="container"><div class="article9-layout">
+  <article class="article9-main">
+    {% if noticia.video_url %}<div class="article9-video" data-reveal><video controls playsinline preload="metadata" {% if noticia.imagen_url %}poster="{{ url_for('static', filename=noticia.imagen_url.replace('/static/','')) if noticia.imagen_url.startswith('/static/') else noticia.imagen_url }}"{% endif %}><source src="{{ url_for('static', filename=noticia.video_url.replace('/static/','')) if noticia.video_url.startswith('/static/') else noticia.video_url }}">Tu navegador no puede reproducir este video.</video></div>{% endif %}
+    {% if noticia.imagen_url and not noticia.video_url %}<figure class="article9-image" data-reveal><img src="{{ url_for('static', filename=noticia.imagen_url.replace('/static/','')) if noticia.imagen_url.startswith('/static/') else noticia.imagen_url }}" alt="{{ noticia.titulo }}"></figure>{% endif %}
+    <div class="article9-lead">{{ noticia.resumen }}</div>
+    <div class="article9-body">{% if noticia.contenido %}{{ noticia.contenido }}{% else %}Esta publicación hace parte del espacio de actualidad institucional de la IED Santa Magdalena Sofía.{% endif %}</div>
+    <div class="article9-note"><i class="bi bi-shield-check"></i><div><strong>Contenido institucional</strong><span>Esta publicación se encuentra en estado público dentro del flujo editorial del portal.</span></div></div>
+  </article>
+  <aside class="article9-aside"><div class="article9-aside-card"><span class="modern-kicker">También puede interesarte</span>{% for item in relacionadas %}<a href="{{ url_for('detalle_noticia', id_noticia=item.id_noticia) }}"><span>{{ item.fecha_publicacion.strftime('%d.%m') if item.fecha_publicacion else '--' }}</span><div><small>{{ item.tipo_contenido|title }}</small><strong>{{ item.titulo }}</strong></div>{% if item.video_url %}<i class="bi bi-play-circle-fill"></i>{% else %}<i class="bi bi-arrow-up-right"></i>{% endif %}</a>{% endfor %}<a class="article9-all" href="{{ url_for('noticias') }}">Ver toda la actualidad <i class="bi bi-arrow-right"></i></a></div></aside>
+</div>
+<div class="article-navigation">{% if anterior %}<a href="{{ url_for('detalle_noticia', id_noticia=anterior.id_noticia) }}"><span><i class="bi bi-arrow-left"></i> Anterior</span><strong>{{ anterior.titulo }}</strong></a>{% else %}<span></span>{% endif %}{% if siguiente %}<a class="text-end" href="{{ url_for('detalle_noticia', id_noticia=siguiente.id_noticia) }}"><span>Siguiente <i class="bi bi-arrow-right"></i></span><strong>{{ siguiente.titulo }}</strong></a>{% endif %}</div>
+</div></section>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "admin_base.html" %}
+{% block title %}{{ 'Editar' if id_noticia else 'Nueva' }} publicación | SMS Admin{% endblock %}
+{% block heading %}Editor de contenido{% endblock %}
+{% block content %}
+<div class="admin9-page-head"><div><span>Noticias · Eventos · Comunicados</span><h1>{{ 'Editar publicación' if id_noticia else 'Crear publicación' }}.</h1><p>Combina texto, imagen y video. La publicación final depende del rol.</p></div><a class="admin8-secondary-btn" href="{{ url_for('admin_noticias') }}"><i class="bi bi-arrow-left"></i> Volver</a></div>
+
+<form method="post" enctype="multipart/form-data" class="admin9-editor-form">
+<input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+<div class="admin9-editor-main">
+  <section class="admin9-editor-card">
+    <label>Título</label><input name="titulo" value="{{ noticia.get('titulo','') }}" maxlength="200" required placeholder="Título claro y breve">
+    <label>Resumen</label><textarea name="resumen" rows="3" maxlength="700" required placeholder="Resumen que aparecerá en tarjetas y portada">{{ noticia.get('resumen','') or '' }}</textarea>
+    <label>Contenido completo</label><textarea name="contenido" rows="12" maxlength="12000" placeholder="Desarrollo de la noticia, evento o comunicado...">{{ noticia.get('contenido','') or '' }}</textarea>
+    <div class="admin8-form-grid"><div><label>Tipo</label><select name="tipo_contenido">{% for t in ['NOTICIA','EVENTO','COMUNICADO'] %}<option value="{{ t }}" {% if noticia.get('tipo_contenido','NOTICIA') == t %}selected{% endif %}>{{ t|title }}</option>{% endfor %}</select></div><div><label>Fecha</label><input type="date" name="fecha_publicacion" value="{{ noticia.get('fecha_publicacion','') or '' }}" required></div></div>
+  </section>
+
+  <section class="admin9-editor-card">
+    <div class="admin9-editor-section-head"><div><span>Multimedia</span><h2>Imagen y video</h2></div><i class="bi bi-camera-reels"></i></div>
+    <p class="admin9-help">Puedes publicar solo texto, agregar una imagen, un video o ambos. Los videos aceptados son MP4 y WEBM.</p>
+    <div class="admin9-media-fields">
+      <div><label>Imagen de portada</label>{% if noticia.get('imagen_url') %}<div class="admin9-current-media"><img src="{{ url_for('static', filename=noticia.get('imagen_url').replace('/static/','')) if noticia.get('imagen_url').startswith('/static/') else noticia.get('imagen_url') }}" alt=""><label><input type="checkbox" name="eliminar_imagen" value="1"> Eliminar imagen actual</label></div>{% endif %}<input type="file" name="imagen" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp"><small>PNG, JPG o WEBP.</small></div>
+      <div><label>Video</label>{% if noticia.get('video_url') %}<div class="admin9-current-media"><video controls preload="metadata"><source src="{{ url_for('static', filename=noticia.get('video_url').replace('/static/','')) if noticia.get('video_url').startswith('/static/') else noticia.get('video_url') }}"></video><label><input type="checkbox" name="eliminar_video" value="1"> Eliminar video actual</label></div>{% endif %}<input type="file" name="video" accept=".mp4,.webm,video/mp4,video/webm"><small>MP4 o WEBM. Límite general de solicitud: 80 MB.</small></div>
+    </div>
+  </section>
+</div>
+
+<aside class="admin9-editor-side">
+  <section class="admin9-editor-card sticky-top admin9-publish-card">
+    <span class="admin9-editor-kicker">Publicación</span>
+    <h2>Estado editorial</h2>
+    <label>Estado</label>
+    <select name="estado">
+      {% for e in ['BORRADOR','REVISION','PUBLICADA','ARCHIVADA'] %}
+        {% if puede_publicar or e in ['BORRADOR','REVISION'] %}<option value="{{ e }}" {% if noticia.get('estado','BORRADOR') == e %}selected{% endif %}>{{ e|title }}</option>{% endif %}
+      {% endfor %}
+    </select>
+    {% if not puede_publicar %}<div class="admin9-role-note"><i class="bi bi-shield-lock"></i><span>Tu rol puede preparar y enviar a revisión. Rectoría o Superadmin realizan la publicación final.</span></div>{% else %}<div class="admin9-role-note success"><i class="bi bi-shield-check"></i><span>Tu rol puede aprobar y publicar contenido institucional.</span></div>{% endif %}
+    <label class="admin8-check"><input type="checkbox" name="destacada" {% if noticia.get('destacada') %}checked{% endif %}><span>Mostrar como destacada en el inicio</span></label>
+    <label>Orden de destacado</label><input type="number" min="1" max="999" name="orden_destacado" value="{{ noticia.get('orden_destacado',999) or 999 }}">
+    <button class="admin8-primary-btn w-100 mt-3"><i class="bi bi-save"></i> Guardar cambios</button>
+  </section>
+</aside>
+</form>
+{% endblock %}

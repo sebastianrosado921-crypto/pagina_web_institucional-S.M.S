@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+{% block title %}Logros y reconocimientos | IED Santa Magdalena Sofía{% endblock %}
+
+{% block content %}
+
+<section class="achievements-hero">
+    <div class="achievements-hero-shape shape-one"></div>
+    <div class="achievements-hero-shape shape-two"></div>
+    <div class="container position-relative">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb breadcrumb-modern achievements-breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('inicio') }}">Inicio</a></li>
+                <li class="breadcrumb-item active">Logros</li>
+            </ol>
+        </nav>
+
+        <div class="row align-items-end g-4">
+            <div class="col-lg-8">
+                <span class="achievement-kicker">
+                    <i class="bi bi-stars"></i> Orgullo Santa Magdalena Sofía
+                </span>
+                <h1>Logros que hablan de nuestra comunidad.</h1>
+                <p>
+                    Un espacio para reconocer experiencias académicas, culturales, deportivas,
+                    ambientales y de liderazgo que fortalecen la vida institucional.
+                </p>
+            </div>
+            <div class="col-lg-4">
+                <div class="achievement-total">
+                    <strong>{{ total }}</strong>
+                    <span>reconocimientos registrados</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="achievement-toolbar">
+    <div class="container">
+        <form class="achievement-filter" method="get" action="{{ url_for('logros') }}">
+            <div class="filter-search">
+                <i class="bi bi-search"></i>
+                <input
+                    type="search"
+                    name="q"
+                    value="{{ termino }}"
+                    placeholder="Buscar logros..."
+                    aria-label="Buscar logros"
+                >
+            </div>
+
+            <select name="categoria" aria-label="Filtrar por categoría">
+                <option value="">Todas las categorías</option>
+                {% for item in categorias %}
+                <option value="{{ item }}" {% if item == categoria %}selected{% endif %}>{{ item }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit">
+                <i class="bi bi-funnel"></i> Filtrar
+            </button>
+
+            {% if termino or categoria %}
+            <a href="{{ url_for('logros') }}" class="clear-filter" aria-label="Limpiar filtros">
+                <i class="bi bi-x-lg"></i>
+            </a>
+            {% endif %}
+        </form>
+    </div>
+</section>
+
+<section class="section-space achievements-page">
+    <div class="container">
+
+        {% if destacado and not termino and not categoria %}
+        <article class="achievement-featured">
+            <div class="achievement-featured-mark">
+                <div class="trophy-orbit"></div>
+                <div class="trophy-core">
+                    <i class="bi bi-trophy-fill"></i>
+                </div>
+            </div>
+
+            <div class="achievement-featured-copy">
+                <span class="modern-kicker">Reconocimiento destacado</span>
+                <h2>{{ destacado.titulo }}</h2>
+                <p>{{ destacado.descripcion }}</p>
+
+                <div class="achievement-featured-meta">
+                    <span><i class="bi bi-tag"></i> {{ destacado.categoria or 'Institucional' }}</span>
+                    {% if destacado.fecha_logro %}
+                    <span><i class="bi bi-calendar3"></i> {{ destacado.fecha_logro.strftime('%d/%m/%Y') }}</span>
+                    {% endif %}
+                </div>
+
+                <a href="{{ url_for('detalle_logro', id_logro=destacado.id_logro) }}">
+                    Conocer este logro <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </article>
+        {% endif %}
+
+        <div class="achievement-list-heading">
+            <div>
+                <span class="modern-kicker">
+                    {% if termino or categoria %}Resultados{% else %}Muro de reconocimientos{% endif %}
+                </span>
+                <h2>
+                    {% if termino or categoria %}
+                        {{ total }} logro(s) encontrado(s)
+                    {% else %}
+                        Nuestra comunidad deja huella
+                    {% endif %}
+                </h2>
+            </div>
+
+            {% if paginas %}
+            <span>Página {{ pagina }} de {{ paginas }}</span>
+            {% endif %}
+        </div>
+
+        <div class="achievement-card-grid">
+            {% for logro in logros %}
+            <a class="achievement-page-card card-tone-{{ (loop.index0 % 6) + 1 }}"
+               href="{{ url_for('detalle_logro', id_logro=logro.id_logro) }}">
+
+                <div class="achievement-page-card-top">
+                    <span class="achievement-category">
+                        {{ logro.categoria or 'Institucional' }}
+                    </span>
+                    <span class="achievement-number">{{ "%02d"|format(loop.index + ((pagina - 1) * 6)) }}</span>
+                </div>
+
+                <div class="achievement-page-icon">
+                    {% set categoria_lower = (logro.categoria or '')|lower %}
+                    {% if 'deport' in categoria_lower %}
+                        <i class="bi bi-dribbble"></i>
+                    {% elif 'ambient' in categoria_lower %}
+                        <i class="bi bi-tree"></i>
+                    {% elif 'cultur' in categoria_lower or 'art' in categoria_lower %}
+                        <i class="bi bi-palette"></i>
+                    {% elif 'lider' in categoria_lower or 'conviv' in categoria_lower %}
+                        <i class="bi bi-people"></i>
+                    {% elif 'tecn' in categoria_lower or 'innov' in categoria_lower %}
+                        <i class="bi bi-lightbulb"></i>
+                    {% else %}
+                        <i class="bi bi-award"></i>
+                    {% endif %}
+                </div>
+
+                <h3>{{ logro.titulo }}</h3>
+                <p>{{ logro.descripcion }}</p>
+
+                <div class="achievement-page-card-footer">
+                    <span>
+                        {% if logro.fecha_logro %}
+                            {{ logro.fecha_logro.strftime('%d.%m.%Y') }}
+                        {% else %}
+                            Reconocimiento institucional
+                        {% endif %}
+                    </span>
+                    <i class="bi bi-arrow-up-right"></i>
+                </div>
+            </a>
+            {% else %}
+            <div class="empty-state grid-column-full">
+                <i class="bi bi-award"></i>
+                <h3>No encontramos logros con esos filtros</h3>
+                <p>Prueba con otra palabra o selecciona otra categoría.</p>
+                <a class="btn btn-outline-modern" href="{{ url_for('logros') }}">Ver todos</a>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if paginas > 1 %}
+        <nav class="news-pagination" aria-label="Paginación de logros">
+            {% if pagina > 1 %}
+            <a href="{{ url_for('logros', page=pagina-1, q=termino, categoria=categoria) }}">
+                <i class="bi bi-arrow-left"></i> Anterior
+            </a>
+            {% else %}
+            <span class="disabled"><i class="bi bi-arrow-left"></i> Anterior</span>
+            {% endif %}
+
+            <div class="page-dots">
+                {% for numero in range(1, paginas + 1) %}
+                    {% if numero == pagina %}
+                    <span class="active">{{ numero }}</span>
+                    {% else %}
+                    <a href="{{ url_for('logros', page=numero, q=termino, categoria=categoria) }}">{{ numero }}</a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            {% if pagina < paginas %}
+            <a href="{{ url_for('logros', page=pagina+1, q=termino, categoria=categoria) }}">
+                Siguiente <i class="bi bi-arrow-right"></i>
+            </a>
+            {% else %}
+            <span class="disabled">Siguiente <i class="bi bi-arrow-right"></i></span>
+            {% endif %}
+        </nav>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends "admin_base.html" %}
+{% block heading %}Galerías e imágenes{% endblock %}
+{% block content %}
+<div class="admin8-page-head"><div><span>Biblioteca visual</span><h1>Álbumes del portal.</h1><p>Crea galerías y administra las imágenes que alimentan el carrusel y las páginas públicas.</p></div><a class="admin8-primary-btn" href="{{ url_for('admin_galeria_form') }}"><i class="bi bi-plus-lg"></i> Nueva galería</a></div>
+<div class="admin8-gallery-grid">
+{% for g in galerias %}
+<article class="admin8-gallery-card"><div class="admin8-gallery-icon"><i class="bi bi-images"></i></div><div><small>{{ g.tipo or 'Institucional' }}</small><h3>{{ g.nombre }}</h3><p>{{ g.descripcion or 'Sin descripción.' }}</p><span>{{ g.total_imagenes }} imágenes</span></div>
+<div class="admin8-gallery-actions"><a href="{{ url_for('admin_imagenes', id_galeria=g.id_galeria) }}"><i class="bi bi-image"></i> Imágenes</a><a href="{{ url_for('admin_galeria_form', id_galeria=g.id_galeria) }}"><i class="bi bi-pencil"></i> Editar</a><form method="post" action="{{ url_for('admin_galeria_eliminar', id_galeria=g.id_galeria) }}" onsubmit="return confirm('¿Eliminar galería e imágenes?');"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button><i class="bi bi-trash"></i> Eliminar</button></form></div></article>
+{% else %}<div class="admin8-empty"><i class="bi bi-images"></i><strong>No hay galerías.</strong></div>{% endfor %}
+</div>{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "admin_base.html" %}
+{% block title %}Resumen | SMS Admin{% endblock %}
+{% block heading %}Resumen editorial{% endblock %}
+{% block content %}
+<div class="admin9-page-head">
+  <div><span>Entrega 9</span><h1>Publicar mejor, con control y criterio.</h1><p>El panel separa edición, revisión y publicación para proteger la información institucional.</p></div>
+  <div class="admin8-button-row"><a class="admin8-secondary-btn" href="{{ url_for('inicio') }}" target="_blank"><i class="bi bi-eye"></i> Ver portal</a><a class="admin8-primary-btn" href="{{ url_for('admin_noticia_form') }}"><i class="bi bi-plus-lg"></i> Nueva publicación</a></div>
+</div>
+
+<div class="admin9-metric-grid">
+  <article><i class="bi bi-newspaper"></i><div><strong>{{ metricas.noticias }}</strong><span>Contenidos</span></div></article>
+  <article><i class="bi bi-hourglass-split"></i><div><strong>{{ metricas.revision }}</strong><span>En revisión</span></div></article>
+  <article><i class="bi bi-play-btn"></i><div><strong>{{ metricas.videos }}</strong><span>Videos públicos</span></div></article>
+  <article><i class="bi bi-inbox"></i><div><strong>{{ metricas.pendientes }}</strong><span>Mensajes pendientes</span></div></article>
+  <article><i class="bi bi-person-workspace"></i><div><strong>{{ metricas.docentes }}</strong><span>Docentes</span></div></article>
+  <article><i class="bi bi-images"></i><div><strong>{{ metricas.galerias }}</strong><span>Galerías</span></div></article>
+  {% if session.get('admin_rol') in ['SUPERADMIN','RECTORIA'] %}<article><i class="bi bi-person-plus"></i><div><strong>{{ metricas.solicitudes_acceso }}</strong><span>Solicitudes de acceso</span></div></article>{% endif %}
+</div>
+
+<div class="admin9-dashboard-grid">
+  <section class="admin9-panel">
+    <div class="admin9-panel-head"><div><span>Actividad editorial</span><h2>Últimos movimientos</h2></div><a href="{{ url_for('admin_noticias') }}">Abrir contenidos</a></div>
+    <div class="admin9-editorial-list">
+      {% for item in actividad_editorial %}
+      <a href="{{ url_for('admin_noticia_form', id_noticia=item.id_noticia) }}">
+        <span class="admin9-type-icon"><i class="bi {{ 'bi-calendar-event' if item.tipo_contenido == 'EVENTO' else ('bi-megaphone' if item.tipo_contenido == 'COMUNICADO' else 'bi-newspaper') }}"></i></span>
+        <div><small>{{ item.tipo_contenido }} · {{ item.estado }}</small><strong>{{ item.titulo }}</strong><span>{{ item.fecha_actualizacion.strftime('%d/%m/%Y %H:%M') if item.fecha_actualizacion else 'Sin actualización registrada' }}</span></div>
+        {% if item.video_url %}<i class="bi bi-play-circle-fill admin9-media-icon"></i>{% elif item.imagen_url %}<i class="bi bi-image admin9-media-icon"></i>{% endif %}
+      </a>
+      {% else %}<p class="text-secondary mb-0">No hay movimientos editoriales.</p>{% endfor %}
+    </div>
+  </section>
+
+  <section class="admin9-panel">
+    <div class="admin9-panel-head"><div><span>Accesos</span><h2>Gestionar portal</h2></div></div>
+    <div class="admin9-shortcuts">
+      <a href="{{ url_for('admin_noticias') }}"><i class="bi bi-newspaper"></i><span><strong>Noticias y eventos</strong><small>Texto, imagen, video y aprobación</small></span></a>
+      {% if tiene_permiso('personal') %}<a href="{{ url_for('admin_personal') }}"><i class="bi bi-people"></i><span><strong>Equipo institucional</strong><small>Rectoría, coordinación y docentes</small></span></a>{% endif %}
+      {% if tiene_permiso('galerias') %}<a href="{{ url_for('admin_galerias') }}"><i class="bi bi-images"></i><span><strong>Galerías</strong><small>Álbumes e imágenes</small></span></a>{% endif %}
+      {% if tiene_permiso('mensajes') %}<a href="{{ url_for('admin_mensajes') }}"><i class="bi bi-inbox"></i><span><strong>Mensajes</strong><small>Seguimiento institucional</small></span></a>{% endif %}
+      <a href="{{ url_for('admin_cuenta') }}"><i class="bi bi-key"></i><span><strong>Mi cuenta</strong><small>Cambiar contraseña</small></span></a>
+      <a href="{{ url_for('videos') }}" target="_blank"><i class="bi bi-play-btn"></i><span><strong>Videos públicos</strong><small>Ver sección multimedia</small></span></a>
+      <!-- ✅ NUEVOS ENLACES -->
+      <a href="{{ url_for('admin_calendario') }}"><i class="bi bi-calendar3"></i><span><strong>Calendario escolar</strong><span>Gestionar fechas y eventos</span></span></a>
+      <a href="{{ url_for('admin_faq') }}"><i class="bi bi-question-circle"></i><span><strong>Preguntas frecuentes</strong><span>Editar dudas y respuestas</span></span></a>
+
+      {% if tiene_permiso('mensajes') %}<a href="{{ url_for('admin_mensajes') }}"><i class="bi bi-inbox"></i><span><strong>Mensajes</strong><small>Seguimiento institucional</small></span></a>{% endif %}
+      <a href="{{ url_for('admin_cuenta') }}"><i class="bi bi-key"></i><span><strong>Mi cuenta</strong><small>Cambiar contraseña</small></span></a>
+      <a href="{{ url_for('videos') }}" target="_blank"><i class="bi bi-play-btn"></i><span><strong>Videos públicos</strong><small>Ver sección multimedia</small></span></a>
+    </div>
+  </section>
+
+  <section class="admin9-panel admin9-panel-wide">
+    <div class="admin9-panel-head"><div><span>Contacto</span><h2>Mensajes recientes</h2></div><a href="{{ url_for('admin_mensajes') }}">Ver bandeja</a></div>
+    <div class="admin9-message-strip">
+      {% for item in mensajes %}<div><span class="admin8-status status-{{ item.estado|lower }}">{{ item.estado }}</span><strong>{{ item.asunto }}</strong><small>{{ item.nombre_remitente }} · {{ item.fecha_envio.strftime('%d/%m/%Y %H:%M') }}</small></div>{% else %}<p class="text-secondary">No hay mensajes.</p>{% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}

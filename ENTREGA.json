@@ -1,0 +1,22 @@
+{
+  "proyecto": "Página Web Institucional",
+  "institucion": "Institución Educativa Distrital Santa Magdalena Sofía",
+  "ciudad": "Barranquilla",
+  "entrega": 9,
+  "modulos": [
+    "Portada editorial de alto impacto",
+    "Noticias, eventos y comunicados multimedia",
+    "Videos institucionales",
+    "Flujo editorial por roles",
+    "Cuenta y cambio de contraseña"
+  ],
+  "acumulativa": true,
+  "base_datos": "paginaWeb_SMS",
+  "tablas_base": 11,
+  "sql_incremental": "SQL/entrega9_roles_editorial_video.sql",
+  "registros_demo_entrega": 10,
+  "roles": ["SUPERADMIN", "RECTORIA", "EDITOR", "COMUNICACIONES"],
+  "estados_editoriales": ["BORRADOR", "REVISION", "PUBLICADA", "ARCHIVADA"],
+  "videos": ["MP4", "WEBM"],
+  "limite_subida_mb": 80
+}

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}{{ galeria.nombre }} | Galería SMS{% endblock %}
+
+{% block content %}
+<section class="gallery5-detail-hero">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb breadcrumb-modern achievements-breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('inicio') }}">Inicio</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('galerias') }}">Galería</a></li>
+                <li class="breadcrumb-item active">Álbum</li>
+            </ol>
+        </nav>
+        <span class="gallery5-kicker"><i class="bi bi-images"></i> {{ galeria.tipo or 'Institucional' }}</span>
+        <h1>{{ galeria.nombre }}</h1>
+        <p>{{ galeria.descripcion or 'Momentos que hacen parte de la memoria institucional.' }}</p>
+        <div class="gallery5-detail-meta">
+            <span><i class="bi bi-camera"></i> {{ imagenes|length }} imágenes</span>
+            <span><i class="bi bi-geo-alt"></i> Barranquilla</span>
+        </div>
+    </div>
+</section>
+
+<section class="section-space gallery5-detail-page">
+    <div class="container">
+        <div class="gallery5-masonry">
+            {% for imagen in imagenes %}
+            <a href="{{ url_for('detalle_imagen', id_imagen=imagen.id_imagen) }}"
+               class="gallery5-photo {% if loop.index in [1,4,7] %}gallery5-photo-wide{% endif %}">
+                <img src="{{ url_for('static', filename=imagen.url_imagen.replace('/static/', '')) if imagen.url_imagen.startswith('/static/') else imagen.url_imagen }}"
+                     alt="{{ imagen.pie_foto or galeria.nombre }}" loading="lazy">
+                <div class="gallery5-photo-caption">
+                    <strong>{{ imagen.pie_foto or galeria.nombre }}</strong>
+                    <span>Ver imagen <i class="bi bi-arrow-up-right"></i></span>
+                </div>
+            </a>
+            {% else %}
+            <div class="empty-state grid-column-full">
+                <i class="bi bi-image"></i>
+                <h3>Álbum sin imágenes</h3>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if relacionadas %}
+        <div class="gallery5-related">
+            <span class="modern-kicker">Continúa explorando</span>
+            <h2>Otros álbumes</h2>
+            <div class="gallery5-related-grid">
+                {% for item in relacionadas %}
+                <a href="{{ url_for('detalle_galeria', id_galeria=item.id_galeria) }}">
+                    {% if item.portada %}
+                    <img src="{{ url_for('static', filename=item.portada.replace('/static/', '')) if item.portada.startswith('/static/') else item.portada }}" alt="{{ item.nombre }}">
+                    {% endif %}
+                    <div><small>{{ item.tipo or 'Institucional' }}</small><strong>{{ item.nombre }}</strong></div>
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

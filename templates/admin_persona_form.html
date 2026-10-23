@@ -1,0 +1,30 @@
+{% extends "admin_base.html" %}
+{% block heading %}{{ 'Docente' if tipo == 'docente' else 'Directivo / administrativo' }}{% endblock %}
+{% block content %}
+<div class="admin8-page-head"><div><span>Perfil institucional</span><h1>{{ 'Editar perfil' if persona_id else 'Nuevo perfil' }}.</h1><p>La fotografía y los datos visibles se publican en la sección Equipo.</p></div><a class="admin8-secondary-btn" href="{{ url_for('admin_personal') }}"><i class="bi bi-arrow-left"></i> Volver</a></div>
+<form method="post" enctype="multipart/form-data" class="admin8-form-card"><input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+<div class="admin8-form-grid">
+<div><label>Nombres</label><input name="nombres" value="{{ persona.get('nombres','') }}" required></div>
+<div><label>Apellidos</label><input name="apellidos" value="{{ persona.get('apellidos','') }}" required></div>
+<div><label>Cargo</label><input name="cargo" value="{{ persona.get('cargo','') }}" required></div>
+<div><label>Correo</label><input type="email" name="correo" value="{{ persona.get('correo','') or '' }}"></div>
+{% if tipo == 'docente' %}
+<div><label>Área académica</label><input name="area" value="{{ persona.get('area','') or '' }}" placeholder="Matemáticas, Tecnología..."></div>
+<div><label>Años de experiencia</label><input type="number" min="0" max="60" name="anios_experiencia" value="{{ persona.get('anios_experiencia','') or '' }}"></div>
+{% else %}
+<div><label>Dependencia</label><input name="dependencia" value="{{ persona.get('dependencia','') or '' }}" placeholder="Rectoría, Coordinación..."></div>
+<div><label>Orden visual</label><input type="number" min="1" name="orden_visual" value="{{ persona.get('orden_visual',100) or 100 }}"></div>
+{% endif %}</div>
+{% if tipo == 'docente' %}<div class="admin8-field"><label>Orden visual</label><input type="number" min="1" name="orden_visual" value="{{ persona.get('orden_visual',100) or 100 }}"></div>{% endif %}
+<div class="admin8-field"><label>Formación</label><input name="formacion" value="{{ persona.get('formacion','') or '' }}"></div>
+<div class="admin8-field"><label>Biografía / perfil</label><textarea name="biografia" rows="6">{{ persona.get('biografia','') or '' }}</textarea></div>
+
+<div class="admin8-upload"><div class="admin8-upload-preview">{% if persona.get('foto_url') %}<img id="photoPreview" src="{{ url_for('static', filename=persona.get('foto_url').replace('/static/','')) if persona.get('foto_url').startswith('/static/') else persona.get('foto_url') }}">{% else %}<div id="photoPlaceholder"><i class="bi bi-person-bounding-box"></i><span>Sin fotografía</span></div><img id="photoPreview" class="d-none">{% endif %}</div><div><label>Fotografía</label><input id="photoInput" type="file" name="foto" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp"><small>PNG/JPG/WEBP · máximo 6 MB. Se recomienda retrato vertical.</small></div></div>
+<label class="admin8-check"><input type="checkbox" name="visible" {% if persona.get('visible', True) %}checked{% endif %}><span>Mostrar este perfil públicamente</span></label>
+
+{% if tipo == 'administrativo' %}
+<div class="admin8-access-box"><h2><i class="bi bi-shield-lock"></i> Acceso al panel</h2><p>Opcional. Actívalo solo para personal autorizado.</p>
+<div class="admin8-form-grid"><div><label>Usuario web</label><input name="usuario_web" value="{{ persona.get('usuario_web','') or '' }}" autocomplete="off"></div><div><label>Rol</label><select name="rol_web">{% for rol in roles %}<option value="{{ rol }}" {% if persona.get('rol_web') == rol %}selected{% endif %}>{{ rol }}</option>{% endfor %}</select></div><div><label>Nueva contraseña</label><input type="password" name="clave" autocomplete="new-password" placeholder="{{ 'Dejar vacía para conservarla' if persona_id else 'Mínimo 8 caracteres' }}"></div><div class="d-flex align-items-end pb-2"><label class="admin8-check mb-0"><input type="checkbox" name="activo_web" {% if persona.get('activo_web') %}checked{% endif %}><span>Cuenta administrativa activa</span></label></div></div></div>
+{% endif %}
+<div class="admin8-form-actions"><button class="admin8-primary-btn"><i class="bi bi-save"></i> Guardar perfil</button></div></form>
+{% endblock %}

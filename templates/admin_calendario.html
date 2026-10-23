@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Administrar Calendario | Panel{% endblock %}
+{% block content %}
+<section class="section-space">
+    <div class="container">
+        <h1 class="mb-4">📅 Gestionar Calendario</h1>
+        <a href="{{ url_for('calendario_nuevo') }}" class="btn btn-primary mb-3">+ Nuevo Evento</a>
+        <a href="{{ url_for('calendario') }}" class="btn btn-outline-modern mb-3">Ver público</a>
+        <hr>
+        {% if eventos %}
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Título</th>
+                        <th>Tipo</th>
+                        <th>Visible</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for e in eventos %}
+                    <tr>
+                        <td>{{ e.fecha_inicio.strftime('%d/%m/%Y') }}</td>
+                        <td>{{ e.titulo }}</td>
+                        <td><span class="badge" style="background: {{ e.color_etiqueta }}22; color: {{ e.color_etiqueta }};">{{ e.tipo_evento|replace('_',' ') }}</span></td>
+                        <td>{% if e.visible_publico %}✅{% else %}❌{% endif %}</td>
+                        <td>
+                            <a href="{{ url_for('calendario_editar', id_e=e.id_evento) }}" class="btn btn-sm btn-outline-primary">Editar</a>
+                            <form method="post" action="{{ url_for('calendario_eliminar', id_e=e.id_evento) }}" style="display:inline" onsubmit="return confirm('¿Eliminar?')">
+                                <button class="btn btn-sm btn-outline-danger">Borrar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-secondary">No hay eventos aún. <a href="{{ url_for('calendario_nuevo') }}">Crear el primero</a>.</p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

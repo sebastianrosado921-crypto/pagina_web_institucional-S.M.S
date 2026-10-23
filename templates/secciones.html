@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Secciones | IED Santa Magdalena Sofía{% endblock %}
+{% block content %}
+<section class="page-hero sections9-hero">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb breadcrumb-modern">
+                <li class="breadcrumb-item"><a href="{{ url_for('inicio') }}">Inicio</a></li>
+                <li class="breadcrumb-item active">Secciones</li>
+            </ol>
+        </nav>
+        <span class="eyebrow eyebrow-light"><i class="bi bi-grid-1x2"></i> Directorio institucional</span>
+        <h1>Explora nuestras secciones</h1>
+        <p>Accesos visuales, rápidos y organizados para encontrar la información institucional que necesitas.</p>
+    </div>
+</section>
+
+<section class="section-space sections9-page">
+    <div class="container">
+        <div class="sections9-toolbar" data-reveal>
+            <form class="sections9-search-form" method="get">
+                <div class="sections9-search-field">
+                    <i class="bi bi-search"></i>
+                    <input name="q" value="{{ termino }}" placeholder="Buscar por nombre o contenido..." aria-label="Buscar sección">
+                </div>
+                <button type="submit"><i class="bi bi-search"></i><span>Buscar</span></button>
+                {% if termino %}<a href="{{ url_for('secciones') }}"><i class="bi bi-x-lg"></i> Limpiar</a>{% endif %}
+            </form>
+            <div class="sections9-count"><strong>{{ total }}</strong><span>{% if total == 1 %}sección disponible{% else %}secciones disponibles{% endif %}</span></div>
+        </div>
+
+        <div class="sections9-grid">
+            {% for seccion in secciones %}
+            {% set nombre = seccion.nombre|lower %}
+            {% if 'calendario' in nombre %}{% set icono='bi-calendar3' %}
+            {% elif 'proyecto' in nombre or 'innovación' in nombre or 'innovacion' in nombre %}{% set icono='bi-lightbulb' %}
+            {% elif 'comunidad' in nombre %}{% set icono='bi-people' %}
+            {% elif 'historia' in nombre or 'trayectoria' in nombre %}{% set icono='bi-hourglass-split' %}
+            {% elif 'símbolo' in nombre or 'simbolo' in nombre %}{% set icono='bi-stars' %}
+            {% elif 'docente' in nombre or 'personal' in nombre %}{% set icono='bi-person-video3' %}
+            {% elif 'contacto' in nombre %}{% set icono='bi-chat-dots' %}
+            {% elif 'noticia' in nombre %}{% set icono='bi-newspaper' %}
+            {% elif 'galer' in nombre %}{% set icono='bi-images' %}
+            {% elif 'red' in nombre %}{% set icono='bi-broadcast-pin' %}
+            {% else %}{% set icono='bi-grid-3x3-gap' %}{% endif %}
+
+            <a class="sections9-card tone-{{ (loop.index0 % 6) + 1 }}" href="{{ url_for('detalle_seccion', id_seccion=seccion.id_seccion) }}" data-reveal>
+                <span class="sections9-glow"></span>
+                <div class="sections9-card-top">
+                    <div class="sections9-icon"><i class="bi {{ icono }}"></i></div>
+                    <span class="sections9-index">{{ "%02d"|format(seccion.orden_menu) }}</span>
+                </div>
+                <div class="sections9-card-copy">
+                    <small>Sección institucional</small>
+                    <h2>{{ seccion.nombre }}</h2>
+                    <p>{{ seccion.descripcion or 'Información institucional disponible para la comunidad educativa.' }}</p>
+                </div>
+                <div class="sections9-card-foot">
+                    <span><i class="bi bi-eye"></i> Pública</span>
+                    <strong>Abrir <i class="bi bi-arrow-up-right"></i></strong>
+                </div>
+                <span class="sections9-ghost">{{ "%02d"|format(loop.index) }}</span>
+            </a>
+            {% else %}
+            <div class="empty-state grid-column-full">
+                <i class="bi bi-search"></i><h2>No encontramos resultados</h2>
+                <p>Prueba con otra palabra o vuelve al listado completo.</p>
+                <a class="btn btn-outline-modern" href="{{ url_for('secciones') }}">Ver todas las secciones</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

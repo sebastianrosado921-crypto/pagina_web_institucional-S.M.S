@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="es" data-bs-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Administración SMS{% endblock %}</title>
+  <meta name="robots" content="noindex,nofollow">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/admin.css') }}" rel="stylesheet">
+</head>
+<body class="admin8-body">
+<div class="admin8-mobilebar">
+  <button class="admin8-menu-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#adminSidebar"><i class="bi bi-list"></i></button>
+  <strong>SMS Admin</strong>
+  <a href="{{ url_for('inicio') }}" target="_blank"><i class="bi bi-box-arrow-up-right"></i></a>
+</div>
+<aside class="admin8-sidebar offcanvas-xl offcanvas-start" tabindex="-1" id="adminSidebar">
+  <div class="offcanvas-header d-xl-none"><strong>Administración</strong><button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button></div>
+  <div class="admin8-brand"><span>SMS</span><div><strong>Portal Institucional</strong><small>Centro de administración</small></div></div>
+  <nav class="admin8-nav">
+    <a class="{% if request.endpoint == 'admin_dashboard' %}active{% endif %}" href="{{ url_for('admin_dashboard') }}"><i class="bi bi-grid-1x2"></i> Resumen</a>
+    {% if session.get('admin_rol') in ['SUPERADMIN','RECTORIA'] %}
+    <a class="{% if request.endpoint == 'admin_general' %}active{% endif %}" href="{{ url_for('admin_general') }}"><i class="bi bi-building-gear"></i> Institución</a>
+    {% endif %}
+    {% if tiene_permiso('personal') %}<a class="{% if request.endpoint in ['admin_personal','admin_persona_form'] %}active{% endif %}" href="{{ url_for('admin_personal') }}"><i class="bi bi-people"></i> Personal</a>{% endif %}
+    
+    <!-- ✅ CALENDARIO AGREGADO AQUÍ -->
+    <a class="{% if request.endpoint == 'admin_calendario' %}active{% endif %}" href="{{ url_for('admin_calendario') }}"><i class="bi bi-calendar3"></i> Calendario</a>
+    
+    <div class="admin8-nav-label">Contenido</div>
+    {% if tiene_permiso('secciones') %}<a href="{{ url_for('admin_contenido_lista', tipo='secciones') }}"><i class="bi bi-layout-text-window"></i> Secciones</a>{% endif %}
+    {% if tiene_permiso('noticias') %}<a class="{% if request.endpoint in ['admin_noticias','admin_noticia_form'] %}active{% endif %}" href="{{ url_for('admin_noticias') }}"><i class="bi bi-newspaper"></i> Noticias y eventos</a>{% endif %}
+    {% if tiene_permiso('logros') %}<a href="{{ url_for('admin_contenido_lista', tipo='logros') }}"><i class="bi bi-trophy"></i> Logros</a>{% endif %}
+    {% if tiene_permiso('galerias') %}<a href="{{ url_for('admin_galerias') }}"><i class="bi bi-images"></i> Galerías</a>{% endif %}
+    {% if tiene_permiso('redes') %}<a href="{{ url_for('admin_contenido_lista', tipo='redes') }}"><i class="bi bi-share"></i> Redes</a>{% endif %}
+    {% if tiene_permiso('mensajes') %}<a href="{{ url_for('admin_mensajes') }}"><i class="bi bi-inbox"></i> Mensajes</a>{% endif %}
+  </nav>
+  <div class="admin8-sidebar-foot">
+    <a href="{{ url_for('admin_cuenta') }}"><i class="bi bi-key"></i> Mi cuenta</a>
+    <a href="{{ url_for('inicio') }}" target="_blank"><i class="bi bi-eye"></i> Ver sitio público</a>
+    <form action="{{ url_for('admin_logout') }}" method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <button type="submit"><i class="bi bi-box-arrow-left"></i> Cerrar sesión</button>
+    </form>
+  </div>
+</aside>
+<main class="admin8-main">
+  <header class="admin8-topbar">
+    <div><span>Panel administrativo</span><strong>{% block heading %}Santa Magdalena Sofía{% endblock %}</strong></div>
+    <div class="admin8-user"><span><i class="bi bi-person-check"></i></span><div><strong>{{ session.get('admin_nombre') }}</strong><small>{{ session.get('admin_rol') }}</small></div></div>
+  </header>
+  {% with mensajes = get_flashed_messages(with_categories=true) %}
+  {% if mensajes %}
+  <div class="admin8-flashes">{% for categoria,mensaje in mensajes %}<div class="alert alert-{{ 'success' if categoria == 'success' else 'danger' }} alert-dismissible fade show">{{ mensaje }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>{% endfor %}</div>
+  {% endif %}
+  {% endwith %}
+  <section class="admin8-content">{% block content %}{% endblock %}</section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>

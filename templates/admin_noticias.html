@@ -1,0 +1,50 @@
+{% extends "admin_base.html" %}
+{% block title %}Noticias y eventos | SMS Admin{% endblock %}
+{% block heading %}Noticias y eventos{% endblock %}
+{% block content %}
+<div class="admin9-page-head">
+  <div><span>Flujo editorial</span><h1>Contenido con revisión y publicación.</h1><p>Editor y Comunicaciones preparan; Rectoría o Superadmin aprueban y publican.</p></div>
+  <a class="admin8-primary-btn" href="{{ url_for('admin_noticia_form') }}"><i class="bi bi-plus-lg"></i> Nueva publicación</a>
+</div>
+
+<div class="admin9-state-cards">
+  <a href="{{ url_for('admin_noticias') }}"><small>Todos</small><strong>{{ noticias|length }}</strong></a>
+  <a href="{{ url_for('admin_noticias', estado='BORRADOR') }}"><small>Borradores</small><strong>{{ conteos.get('BORRADOR',0) }}</strong></a>
+  <a href="{{ url_for('admin_noticias', estado='REVISION') }}"><small>En revisión</small><strong>{{ conteos.get('REVISION',0) }}</strong></a>
+  <a href="{{ url_for('admin_noticias', estado='PUBLICADA') }}"><small>Publicadas</small><strong>{{ conteos.get('PUBLICADA',0) }}</strong></a>
+</div>
+
+<form class="admin9-filterbar" method="get">
+  <div><i class="bi bi-search"></i><input name="q" value="{{ q }}" placeholder="Buscar título o resumen..."></div>
+  <select name="tipo"><option value="">Todos los tipos</option>{% for t in ['NOTICIA','EVENTO','COMUNICADO'] %}<option value="{{ t }}" {% if tipo==t %}selected{% endif %}>{{ t|title }}</option>{% endfor %}</select>
+  <select name="estado"><option value="">Todos los estados</option>{% for e in ['BORRADOR','REVISION','PUBLICADA','ARCHIVADA'] %}<option value="{{ e }}" {% if estado==e %}selected{% endif %}>{{ e|title }}</option>{% endfor %}</select>
+  <button>Filtrar</button>
+  {% if q or tipo or estado %}<a href="{{ url_for('admin_noticias') }}"><i class="bi bi-x-lg"></i></a>{% endif %}
+</form>
+
+<div class="admin9-content-grid">
+{% for item in noticias %}
+<article class="admin9-content-card">
+  <div class="admin9-content-media">
+    {% if item.imagen_url %}<img src="{{ url_for('static', filename=item.imagen_url.replace('/static/','')) if item.imagen_url.startswith('/static/') else item.imagen_url }}" alt="">{% else %}<span><i class="bi bi-newspaper"></i></span>{% endif %}
+    {% if item.video_url %}<b><i class="bi bi-play-fill"></i> VIDEO</b>{% endif %}
+    <em>{{ item.tipo_contenido }}</em>
+  </div>
+  <div class="admin9-content-body">
+    <div class="admin9-content-meta"><span class="admin9-state state-{{ item.estado|lower }}">{{ item.estado }}</span>{% if item.destacada %}<span class="admin9-featured"><i class="bi bi-star-fill"></i> Destacada</span>{% endif %}</div>
+    <h3>{{ item.titulo }}</h3><p>{{ item.resumen }}</p>
+    <small>{{ item.fecha_publicacion.strftime('%d/%m/%Y') if item.fecha_publicacion else 'Sin fecha' }}{% if item.editor %} · {{ item.editor }}{% endif %}</small>
+    <div class="admin9-content-actions">
+      <a href="{{ url_for('admin_noticia_form', id_noticia=item.id_noticia) }}"><i class="bi bi-pencil"></i> Editar</a>
+      {% if item.estado == 'REVISION' and puede_publicar %}
+      <form method="post" action="{{ url_for('admin_noticia_estado', id_noticia=item.id_noticia) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="estado" value="PUBLICADA"><button class="approve"><i class="bi bi-check2-circle"></i> Aprobar</button></form>
+      {% elif item.estado != 'PUBLICADA' %}
+      <form method="post" action="{{ url_for('admin_noticia_estado', id_noticia=item.id_noticia) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="estado" value="REVISION"><button><i class="bi bi-send-check"></i> Enviar a revisión</button></form>
+      {% endif %}
+      {% if item.estado != 'PUBLICADA' or puede_publicar %}<form method="post" action="{{ url_for('admin_noticia_eliminar', id_noticia=item.id_noticia) }}" onsubmit="return confirm('¿Eliminar esta publicación y sus archivos locales?');"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="danger"><i class="bi bi-trash"></i></button></form>{% endif %}
+    </div>
+  </div>
+</article>
+{% else %}<div class="admin8-empty"><i class="bi bi-search"></i><strong>No hay publicaciones con estos filtros.</strong></div>{% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block title %}Contacto | IED Santa Magdalena Sofía{% endblock %}
+
+{% block content %}
+<section class="contact7-hero">
+    <div class="contact7-pattern"></div>
+    <div class="container position-relative">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb breadcrumb-modern achievements-breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('inicio') }}">Inicio</a></li>
+                <li class="breadcrumb-item active">Contacto</li>
+            </ol>
+        </nav>
+
+        <div class="row align-items-end g-4">
+            <div class="col-lg-8" data-reveal>
+                <span class="gallery5-kicker"><i class="bi bi-chat-square-dots"></i> Estamos para orientarte</span>
+                <h1>Hablemos con claridad y cercanía.</h1>
+                <p>
+                    Envía tu consulta a la institución. El mensaje queda registrado
+                    de forma segura en PostgreSQL para su posterior seguimiento institucional.
+                </p>
+            </div>
+            <div class="col-lg-4" data-reveal>
+                <div class="contact7-response">
+                    <span><i class="bi bi-shield-check"></i></span>
+                    <div><strong>Formulario protegido</strong><small>Validación, token de sesión y consultas parametrizadas.</small></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="contact7-main">
+    <div class="container">
+        <div class="contact7-layout">
+            <div class="contact7-form-shell" data-reveal>
+                <div class="contact7-form-head">
+                    <span class="modern-kicker">Escríbenos</span>
+                    <h2>¿En qué podemos ayudarte?</h2>
+                    <p>Completa los campos. Todos los datos marcados son obligatorios.</p>
+                </div>
+
+                <form method="post" action="{{ url_for('contacto') }}" class="contact7-form" novalidate>
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                    <div class="contact7-honeypot" aria-hidden="true">
+                        <label>Website</label>
+                        <input type="text" name="website" tabindex="-1" autocomplete="off">
+                    </div>
+
+                    <div class="contact7-row">
+                        <div class="contact7-field">
+                            <label for="nombre">Nombre completo</label>
+                            <div><i class="bi bi-person"></i><input id="nombre" name="nombre" type="text" minlength="3" maxlength="150" required value="{{ form_data.get('nombre','') }}" placeholder="Tu nombre"></div>
+                        </div>
+                        <div class="contact7-field">
+                            <label for="correo">Correo electrónico</label>
+                            <div><i class="bi bi-envelope"></i><input id="correo" name="correo" type="email" maxlength="150" required value="{{ form_data.get('correo','') }}" placeholder="nombre@correo.com"></div>
+                        </div>
+                    </div>
+
+                    <div class="contact7-field">
+                        <label for="asunto">Asunto</label>
+                        <div><i class="bi bi-tag"></i><input id="asunto" name="asunto" type="text" minlength="4" maxlength="200" required value="{{ form_data.get('asunto','') }}" placeholder="Motivo de tu consulta"></div>
+                    </div>
+
+                    <div class="contact7-field">
+                        <label for="mensaje">Mensaje</label>
+                        <div class="contact7-textarea"><i class="bi bi-chat-left-text"></i><textarea id="mensaje" name="mensaje" minlength="10" maxlength="3000" required placeholder="Cuéntanos cómo podemos orientarte...">{{ form_data.get('mensaje','') }}</textarea></div>
+                        <small><span id="messageCount">0</span>/3000 caracteres</small>
+                    </div>
+
+                    <div class="contact7-submit-row">
+                        <p><i class="bi bi-lock"></i> La información se utiliza únicamente para gestionar tu solicitud institucional.</p>
+                        <button type="submit">Enviar mensaje <i class="bi bi-send"></i></button>
+                    </div>
+                </form>
+            </div>
+
+            <aside class="contact7-aside" data-reveal>
+                <div class="contact7-info-card">
+                    <span class="modern-kicker">Canales institucionales</span>
+                    <h2>También puedes encontrarnos aquí.</h2>
+
+                    <div class="contact7-info-list">
+                        <div><span><i class="bi bi-geo-alt-fill"></i></span><div><small>Dirección</small><strong>{{ contacto.direccion if contacto else 'Calle 84B #76-82, Barranquilla' }}</strong></div></div>
+                        {% if contacto and contacto.telefono %}<div><span><i class="bi bi-telephone-fill"></i></span><div><small>Teléfono</small><strong>{{ contacto.telefono }}</strong></div></div>{% endif %}
+                        {% if contacto and contacto.correo %}<div><span><i class="bi bi-envelope-fill"></i></span><div><small>Correo</small><strong>{{ contacto.correo }}</strong></div></div>{% endif %}
+                        {% if contacto and contacto.horario_atencion %}<div><span><i class="bi bi-clock-fill"></i></span><div><small>Horario</small><strong>{{ contacto.horario_atencion }}</strong></div></div>{% endif %}
+                    </div>
+
+                    <div class="contact7-socials">
+                        {% for red in redes[:5] %}
+                        <a href="{{ red.url_enlace }}" target="_blank" rel="noopener noreferrer" aria-label="{{ red.plataforma }}">
+                            <i class="bi {{ red.icono or 'bi-link-45deg' }}"></i>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <a class="contact7-map-mini" href="https://www.google.com/maps/search/?api=1&query=Instituci%C3%B3n+Educativa+Distrital+Santa+Magdalena+Sof%C3%ADa%2C+Calle+84B+76-82%2C+Barranquilla" target="_blank" rel="noopener noreferrer">
+                    <div class="contact7-map-lines"></div>
+                    <span><i class="bi bi-map"></i></span>
+                    <div><small>Ubicación</small><strong>Abrir Google Maps</strong></div>
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
+            </aside>
+        </div>
+    </div>
+</section>
+
+<section class="contact7-process">
+    <div class="container">
+        <div class="contact7-process-head text-center" data-reveal>
+            <span class="modern-kicker">Cómo funciona</span>
+            <h2>Un proceso simple y transparente.</h2>
+        </div>
+
+        <div class="contact7-steps">
+            <article data-reveal><span>01</span><i class="bi bi-pencil-square"></i><h3>Escribes</h3><p>Completa el formulario con información clara.</p></article>
+            <article data-reveal><span>02</span><i class="bi bi-shield-check"></i><h3>Validamos</h3><p>El sistema verifica los datos antes de registrarlos.</p></article>
+            <article data-reveal><span>03</span><i class="bi bi-database-check"></i><h3>Registramos</h3><p>Tu mensaje queda almacenado para seguimiento.</p></article>
+            <article data-reveal><span>04</span><i class="bi bi-chat-check"></i><h3>Atendemos</h3><p>El responsable institucional podrá gestionar la solicitud.</p></article>
+        </div>
+    </div>
+</section>
+{% endblock %}

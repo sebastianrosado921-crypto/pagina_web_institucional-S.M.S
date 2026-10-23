@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}{{ imagen.pie_foto or imagen.galeria_nombre }} | Galería SMS{% endblock %}
+
+{% block content %}
+<section class="image5-page">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb breadcrumb-modern">
+                <li class="breadcrumb-item"><a href="{{ url_for('inicio') }}">Inicio</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('galerias') }}">Galería</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('detalle_galeria', id_galeria=imagen.id_galeria) }}">{{ imagen.galeria_nombre }}</a></li>
+                <li class="breadcrumb-item active">Imagen</li>
+            </ol>
+        </nav>
+
+        <div class="image5-stage">
+            <div class="image5-visual">
+                <img src="{{ url_for('static', filename=imagen.url_imagen.replace('/static/', '')) if imagen.url_imagen.startswith('/static/') else imagen.url_imagen }}"
+                     alt="{{ imagen.pie_foto or imagen.galeria_nombre }}">
+            </div>
+            <aside class="image5-info">
+                <span class="gallery5-kicker">{{ imagen.galeria_tipo or 'Institucional' }}</span>
+                <h1>{{ imagen.pie_foto or imagen.galeria_nombre }}</h1>
+                <p>{{ imagen.galeria_descripcion or 'Registro visual de la vida institucional de Santa Magdalena Sofía.' }}</p>
+                <div class="image5-meta">
+                    <span><i class="bi bi-images"></i> {{ imagen.galeria_nombre }}</span>
+                    {% if imagen.fecha_carga %}<span><i class="bi bi-calendar3"></i> {{ imagen.fecha_carga.strftime('%d/%m/%Y') }}</span>{% endif %}
+                </div>
+                <a class="btn image5-back" href="{{ url_for('detalle_galeria', id_galeria=imagen.id_galeria) }}">
+                    <i class="bi bi-arrow-left"></i> Volver al álbum
+                </a>
+            </aside>
+        </div>
+
+        {% if relacionadas %}
+        <div class="image5-more">
+            <span class="modern-kicker">Más del álbum</span>
+            <div class="image5-more-grid">
+                {% for item in relacionadas %}
+                <a href="{{ url_for('detalle_imagen', id_imagen=item.id_imagen) }}">
+                    <img src="{{ url_for('static', filename=item.url_imagen.replace('/static/', '')) if item.url_imagen.startswith('/static/') else item.url_imagen }}"
+                         alt="{{ item.pie_foto or imagen.galeria_nombre }}">
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

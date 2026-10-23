@@ -1,0 +1,16 @@
+{% extends "admin_base.html" %}
+{% block heading %}Información institucional{% endblock %}
+{% block content %}
+<div class="admin8-page-head"><div><span>Configuración pública</span><h1>Identidad y contacto.</h1><p>Los cambios se reflejan en las páginas públicas conectadas a estos datos.</p></div></div>
+<form method="post" class="admin8-form-card">
+<input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+<div class="admin8-form-section"><h2>Identidad</h2>
+<label>Nombre oficial</label><input name="nombre" value="{{ institucion.nombre }}" required>
+<label>Misión</label><textarea name="mision" rows="5">{{ institucion.mision or '' }}</textarea>
+<label>Visión</label><textarea name="vision" rows="5">{{ institucion.vision or '' }}</textarea>
+<label>Descripción general</label><textarea name="descripcion_general" rows="5">{{ institucion.descripcion_general or '' }}</textarea></div>
+<div class="admin8-form-section"><h2>Contacto</h2>
+<div class="admin8-form-grid"><div><label>Teléfono</label><input name="telefono" value="{{ contacto.telefono or '' }}"></div><div><label>Correo</label><input type="email" name="correo" value="{{ contacto.correo or '' }}"></div></div>
+<label>Dirección</label><input name="direccion" value="{{ contacto.direccion or '' }}"><label>Horario</label><input name="horario_atencion" value="{{ contacto.horario_atencion or '' }}"></div>
+<div class="admin8-form-actions"><button class="admin8-primary-btn"><i class="bi bi-save"></i> Guardar cambios</button></div>
+</form>{% endblock %}

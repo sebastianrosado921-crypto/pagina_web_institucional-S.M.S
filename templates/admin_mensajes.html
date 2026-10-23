@@ -1,0 +1,11 @@
+{% extends "admin_base.html" %}
+{% block heading %}Mensajes de contacto{% endblock %}
+{% block content %}
+<div class="admin8-page-head"><div><span>Bandeja institucional</span><h1>Solicitudes recibidas.</h1><p>Cambia el estado de seguimiento o elimina registros que ya no deban conservarse.</p></div></div>
+<div class="admin8-filter-row"><a class="{% if not estado %}active{% endif %}" href="{{ url_for('admin_mensajes') }}">Todos</a>{% for e in ['PENDIENTE','LEIDO','RESPONDIDO','ARCHIVADO'] %}<a class="{% if estado == e %}active{% endif %}" href="{{ url_for('admin_mensajes', estado=e) }}">{{ e }}</a>{% endfor %}</div>
+<div class="admin8-message-list">
+{% for m in mensajes %}
+<article class="admin8-message"><div class="admin8-message-meta"><span class="admin8-status status-{{ m.estado|lower }}">{{ m.estado }}</span><small>{{ m.fecha_envio.strftime('%d/%m/%Y %H:%M') }}</small></div><h3>{{ m.asunto }}</h3><strong>{{ m.nombre_remitente }} · {{ m.correo_remitente }}</strong><p>{{ m.mensaje }}</p>
+<div class="admin8-message-actions"><form method="post" action="{{ url_for('admin_mensaje_estado', id_mensaje=m.id_mensaje) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><select name="estado">{% for e in ['PENDIENTE','LEIDO','RESPONDIDO','ARCHIVADO'] %}<option value="{{ e }}" {% if e==m.estado %}selected{% endif %}>{{ e }}</option>{% endfor %}</select><button><i class="bi bi-check2"></i> Actualizar</button></form><form method="post" action="{{ url_for('admin_mensaje_eliminar', id_mensaje=m.id_mensaje) }}" onsubmit="return confirm('¿Eliminar mensaje?');"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="danger"><i class="bi bi-trash"></i></button></form></div></article>
+{% else %}<div class="admin8-empty"><i class="bi bi-inbox"></i><strong>No hay mensajes para este filtro.</strong></div>{% endfor %}
+</div>{% endblock %}

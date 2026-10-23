@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}SIAN | {{ institucion.nombre_institucion }}{% endblock %}
+{% block content %}
+
+{# ===== HERO ===== #}
+<section class="page-hero sections9-hero">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb breadcrumb-modern">
+                <li class="breadcrumb-item"><a href="{{ url_for('inicio') }}">Inicio</a></li>
+                <li class="breadcrumb-item active">SIAN</li>
+            </ol>
+        </nav>
+        <span class="eyebrow eyebrow-light"><i class="bi bi-diagram-3"></i> Sistema Integrado</span>
+        <h1>Acceso al SIAN</h1>
+        <p>Plataforma oficial de consulta y gestión académica de la IED Santa Magdalena Sofía.</p>
+    </div>
+</section>
+
+{# ===== ACCESO PRINCIPAL ===== #}
+<section class="section-space py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm p-5 text-center">
+                    <div class="text-primary mb-4" style="font-size: 3rem;">
+                        <i class="bi bi-person-lock"></i>
+                    </div>
+                    <h2 class="mb-3">Ingresa al sistema</h2>
+                    <p class="text-secondary mb-4">Estudiantes, docentes y padres de familia ingresan con sus credenciales desde la plataforma oficial.</p>
+                    
+                    <a href="https://cloud.sian365.co/iedsantamagdalena/logins.aspx" target="_blank" 
+                       class="btn btn-primary-modern px-5 py-3 fs-5">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>
+                        Ingresar al portal SIAN
+                    </a>
+                    
+                    <p class="text-muted small mt-4">
+                        ¿Tienes problemas para ingresar? 
+                        <a href="{{ url_for('contacto') }}" class="text-decoration-underline">Contáctanos</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

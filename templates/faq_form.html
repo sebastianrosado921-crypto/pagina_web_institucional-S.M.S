@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}{% if pregunta %}Editar{% else %}Nueva{% endif %} Pregunta{% endblock %}
+{% block content %}
+<section class="section-space">
+    <div class="container" style="max-width:700px">
+        <h1 class="mb-4">{% if pregunta %}✏️ Editar Pregunta{% else %}➕ Nueva Pregunta{% endif %}</h1>
+        <form method="post">
+            <div class="mb-3">
+                <label class="form-label">Categoría *</label>
+                <input type="text" name="categoria" class="form-control" required placeholder="Ej: Matrículas, Horarios, Pagos..." value="{{ pregunta.categoria if pregunta else '' }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Pregunta *</label>
+                <input type="text" name="pregunta" class="form-control" required value="{{ pregunta.pregunta if pregunta else '' }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Respuesta *</label>
+                <textarea name="respuesta" class="form-control" rows="5" required>{{ pregunta.respuesta if pregunta else '' }}</textarea>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Orden de visualización</label>
+                    <input type="number" name="orden_visual" class="form-control" value="{{ pregunta.orden_visual if pregunta else '0' }}">
+                </div>
+                <div class="col-md-6 mb-3 align-self-center">
+                    <label class="form-check-label mt-3">
+                        <input class="form-check-input" type="checkbox" name="visible" {% if not pregunta or pregunta.visible %}checked{% endif %}>
+                        Visible al público
+                    </label>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">💾 Guardar</button>
+            <a href="{{ url_for('admin_faq') }}" class="btn btn-outline-secondary">Cancelar</a>
+        </form>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,311 @@
+{% extends "base.html" %}
+{% block title %}Nuestra Institución | IED Santa Magdalena Sofía{% endblock %}
+
+{% block content %}
+{% if db_error %}
+<section class="db-alert-wrap">
+    <div class="container">
+        <div class="alert alert-warning border-0 shadow-sm mb-0">
+            <strong>No fue posible cargar la información institucional.</strong>
+            <div>Verifica PostgreSQL y los SQL acumulativos del proyecto.</div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<section class="institution7-hero">
+    <div class="institution7-hero-grid"></div>
+    <div class="container position-relative">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb breadcrumb-modern achievements-breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('inicio') }}">Inicio</a></li>
+                <li class="breadcrumb-item active">Nuestra institución</li>
+            </ol>
+        </nav>
+
+        <div class="row align-items-end g-5">
+            <div class="col-xl-8" data-reveal>
+                <span class="gallery5-kicker"><i class="bi bi-building"></i> Identidad · Historia · Comunidad</span>
+                <h1>Conoce la historia que sostiene nuestro presente.</h1>
+                <p>
+                    Una lectura renovada de la identidad de
+                    {{ institucion.nombre if institucion else 'Santa Magdalena Sofía' }},
+                    organizada para que la comunidad comprenda de dónde venimos,
+                    qué nos orienta y hacia dónde avanzamos.
+                </p>
+                <div class="institution7-actions">
+                    <a class="btn home6-map-btn" href="#historia"><i class="bi bi-arrow-down"></i> Recorrer historia</a>
+                    <a class="btn institution7-ghost" href="#identidad-institucional"><i class="bi bi-compass"></i> Misión y visión</a>
+                </div>
+            </div>
+
+            <div class="col-xl-4" data-reveal>
+                <div class="institution7-hero-stats">
+                    <div><strong data-counter="{{ metricas.secciones }}">0</strong><span>Secciones</span></div>
+                    <div><strong data-counter="{{ metricas.noticias }}">0</strong><span>Noticias</span></div>
+                    <div><strong data-counter="{{ metricas.logros }}">0</strong><span>Logros</span></div>
+                    <div><strong data-counter="{{ metricas.galerias }}">0</strong><span>Galerías</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<nav class="institution7-anchor" aria-label="Navegación institucional">
+    <div class="container">
+        <div class="institution7-anchor-scroll">
+            <a href="#historia"><span>01</span> Historia</a>
+            <a href="#trayectoria"><span>02</span> Trayectoria</a>
+            <a href="#identidad-institucional"><span>03</span> Misión y visión</a>
+            <a href="#horizonte"><span>04</span> Horizonte</a>
+            <a href="#comunidad"><span>05</span> Comunidad</a>
+        </div>
+    </div>
+</nav>
+
+{% set historia = secciones_por_nombre.get('Historia y trayectoria') %}
+{% set proyectos = secciones_por_nombre.get('Proyectos pedagógicos') %}
+{% set convivencia = secciones_por_nombre.get('Convivencia escolar') %}
+
+<section class="institution7-feature-strip">
+    <div class="container">
+        <div class="institution7-feature-grid">
+            <a href="#historia" class="institution7-feature-card" data-reveal>
+                <span>01 / 03</span>
+                <i class="bi bi-clock-history"></i>
+                <h2>Conoce nuestra historia</h2>
+                <p>Orígenes, transformaciones y sentido de pertenencia.</p>
+                <strong>Explorar <i class="bi bi-arrow-right"></i></strong>
+            </a>
+
+            <a href="#horizonte" class="institution7-feature-card" data-reveal>
+                <span>02 / 03</span>
+                <i class="bi bi-lightbulb"></i>
+                <h2>Conoce cómo aprendemos</h2>
+                <p>Proyectos, innovación y experiencias que transforman el aula.</p>
+                <strong>Explorar <i class="bi bi-arrow-right"></i></strong>
+            </a>
+
+            <a href="#comunidad" class="institution7-feature-card" data-reveal>
+                <span>03 / 03</span>
+                <i class="bi bi-people"></i>
+                <h2>Conoce nuestra comunidad</h2>
+                <p>Participación, convivencia y acompañamiento institucional.</p>
+                <strong>Explorar <i class="bi bi-arrow-right"></i></strong>
+            </a>
+        </div>
+    </div>
+</section>
+
+<section id="historia" class="institution7-history">
+    <div class="container">
+        <div class="row g-5 align-items-center">
+            <div class="col-lg-6" data-reveal>
+                <div class="institution7-history-visual tilt-lite">
+                    <div class="history7-grid"></div>
+                    <div class="history7-year">SMS</div>
+                    <div class="history7-badge"><i class="bi bi-geo-alt-fill"></i> Barranquilla</div>
+                    <div class="history7-caption">
+                        <small>Nuestra trayectoria</small>
+                        <strong>Educación, comunidad y transformación.</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6" data-reveal>
+                <span class="modern-kicker">Nuestra trayectoria</span>
+                <h2 class="institution7-title">Historia institucional.</h2>
+                <p class="institution7-lead">
+                    {{ historia.descripcion if historia else
+                    'La institución ha construido su identidad mediante procesos educativos, comunitarios y pedagógicos que se transforman con las necesidades de sus estudiantes y de Barranquilla.' }}
+                </p>
+                <p class="text-secondary">
+                    Esta sección presenta la historia sin inventar fechas que no estén registradas
+                    en la base de datos. La trayectoria se organiza por etapas para facilitar su
+                    lectura y permitir que posteriormente se incorporen hitos oficiales del colegio.
+                </p>
+
+                <div class="institution7-badges">
+                    <span><i class="bi bi-building-check"></i> Institución educativa</span>
+                    <span><i class="bi bi-geo-alt"></i> Barranquilla, Atlántico</span>
+                    <span><i class="bi bi-people"></i> Comunidad educativa</span>
+                </div>
+
+                {% if historia %}
+                <a class="institution7-text-link" href="{{ url_for('detalle_seccion', id_seccion=historia.id_seccion) }}">
+                    Abrir contenido completo <i class="bi bi-arrow-up-right"></i>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="trayectoria" class="institution7-timeline-section">
+    <div class="container">
+        <div class="institution7-section-head text-center" data-reveal>
+            <span class="modern-kicker">Etapas que nos definen</span>
+            <h2 class="institution7-title mx-auto">Una trayectoria que sigue creciendo.</h2>
+            <p>
+                Presentamos etapas conceptuales de nuestra evolución institucional.
+                Las fechas históricas podrán incorporarse cuando la institución suministre
+                la cronología oficial.
+            </p>
+        </div>
+
+        <div class="timeline7">
+            <article class="timeline7-item" data-reveal>
+                <span class="timeline7-dot">01</span>
+                <div>
+                    <small>Origen</small>
+                    <h3>Vocación educativa</h3>
+                    <p>El compromiso con la formación integral y el servicio a la comunidad constituye el punto de partida de nuestra identidad.</p>
+                </div>
+            </article>
+            <article class="timeline7-item" data-reveal>
+                <span class="timeline7-dot">02</span>
+                <div>
+                    <small>Crecimiento</small>
+                    <h3>Comunidad que participa</h3>
+                    <p>Familias, estudiantes, docentes y equipos institucionales fortalecen los procesos académicos y de convivencia.</p>
+                </div>
+            </article>
+            <article class="timeline7-item" data-reveal>
+                <span class="timeline7-dot">03</span>
+                <div>
+                    <small>Transformación</small>
+                    <h3>Innovación y nuevas experiencias</h3>
+                    <p>Los proyectos pedagógicos y el uso responsable de la tecnología amplían las oportunidades de aprendizaje.</p>
+                </div>
+            </article>
+            <article class="timeline7-item" data-reveal>
+                <span class="timeline7-dot">04</span>
+                <div>
+                    <small>Proyección</small>
+                    <h3>Construimos el futuro</h3>
+                    <p>La institución continúa consolidando una educación pertinente, cercana y conectada con las necesidades del contexto.</p>
+                </div>
+            </article>
+        </div>
+    </div>
+</section>
+
+<section class="institution7-numbers">
+    <div class="container">
+        <div class="institution7-number-grid">
+            <div data-reveal><strong data-counter="{{ metricas.secciones }}">0</strong><span>Rutas de información</span></div>
+            <div data-reveal><strong data-counter="{{ metricas.noticias }}">0</strong><span>Noticias publicadas</span></div>
+            <div data-reveal><strong data-counter="{{ metricas.logros }}">0</strong><span>Logros registrados</span></div>
+            <div data-reveal><strong data-counter="{{ metricas.galerias }}">0</strong><span>Álbumes institucionales</span></div>
+        </div>
+    </div>
+</section>
+
+<section id="identidad-institucional" class="section-space identity-editorial-section">
+    <div class="container">
+        <div class="row g-4 align-items-end mb-5">
+            <div class="col-lg-7" data-reveal>
+                <span class="modern-kicker">Lo que nos orienta</span>
+                <h2 class="institution7-title mb-0">Misión y visión con protagonismo real.</h2>
+            </div>
+            <div class="col-lg-5" data-reveal>
+                <p class="text-secondary mb-0">
+                    Dos principios centrales que orientan las decisiones y la proyección institucional.
+                </p>
+            </div>
+        </div>
+
+        <div class="identity-editorial-grid">
+            <article class="identity-editorial-card mission-card tilt-lite" data-reveal>
+                <div class="editorial-number">01</div>
+                <div class="editorial-icon"><i class="bi bi-bullseye"></i></div>
+                <span>Misión</span>
+                <h3>El propósito que guía el presente.</h3>
+                <p>{{ institucion.mision if institucion else 'Misión institucional.' }}</p>
+            </article>
+            <article class="identity-editorial-card vision-card tilt-lite" data-reveal>
+                <div class="editorial-number">02</div>
+                <div class="editorial-icon"><i class="bi bi-binoculars"></i></div>
+                <span>Visión</span>
+                <h3>La dirección que inspira el futuro.</h3>
+                <p>{{ institucion.vision if institucion else 'Visión institucional.' }}</p>
+            </article>
+        </div>
+    </div>
+</section>
+
+<section id="horizonte" class="section-space section-soft">
+    <div class="container">
+        {% set horizonte = secciones_por_nombre.get('Horizonte institucional') %}
+        {% set pei = secciones_por_nombre.get('Proyecto Educativo Institucional') %}
+        {% set simbolos = secciones_por_nombre.get('Símbolos institucionales') %}
+        <div class="institution7-section-head" data-reveal>
+            <span class="modern-kicker">Arquitectura institucional</span>
+            <h2 class="institution7-title">Lo que sostiene nuestra propuesta educativa.</h2>
+        </div>
+
+        <div class="institution-feature-grid">
+            {% for item, icono, etiqueta in [
+                (horizonte, 'bi-compass', 'Horizonte'),
+                (pei, 'bi-journal-richtext', 'Proyecto Educativo'),
+                (simbolos, 'bi-shield-star', 'Identidad'),
+                (convivencia, 'bi-people', 'Convivencia')
+            ] %}
+            <article class="institution-feature-card tilt-lite" data-reveal>
+                <div class="feature-card-top"><span><i class="bi {{ icono }}"></i></span><small>{{ etiqueta }}</small></div>
+                <h3>{{ item.nombre if item else etiqueta }}</h3>
+                <p>{{ item.descripcion if item else 'Contenido institucional organizado para la comunidad educativa.' }}</p>
+                {% if item %}<a href="{{ url_for('detalle_seccion', id_seccion=item.id_seccion) }}">Explorar <i class="bi bi-arrow-up-right"></i></a>{% endif %}
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section id="comunidad" class="section-space community-paths-section">
+    <div class="container">
+        {% set gobierno = secciones_por_nombre.get('Gobierno escolar') %}
+        {% set bienestar = secciones_por_nombre.get('Bienestar y orientación') %}
+        {% set servicios = secciones_por_nombre.get('Servicios a la comunidad') %}
+        {% set familias = secciones_por_nombre.get('Participación de las familias') %}
+
+        <div class="institution7-section-head text-center" data-reveal>
+            <span class="modern-kicker">Comunidad que participa</span>
+            <h2 class="institution7-title mx-auto">Distintas rutas, una misma comunidad.</h2>
+        </div>
+
+        <div class="community-path-grid">
+            {% for item, numero, icono in [
+                (gobierno, '01', 'bi-bank'),
+                (bienestar, '02', 'bi-heart-pulse'),
+                (servicios, '03', 'bi-grid-1x2'),
+                (familias, '04', 'bi-people-fill')
+            ] %}
+            <a class="community-path-card tilt-lite" data-reveal {% if item %}href="{{ url_for('detalle_seccion', id_seccion=item.id_seccion) }}"{% endif %}>
+                <div class="community-path-number">{{ numero }}</div>
+                <i class="bi {{ icono }}"></i>
+                <h3>{{ item.nombre if item else 'Ruta institucional' }}</h3>
+                <p>{{ item.descripcion if item else 'Información organizada para la comunidad educativa.' }}</p>
+                <span>Conocer más <i class="bi bi-arrow-right"></i></span>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="institution7-final-cta">
+    <div class="container">
+        <div class="institution7-final-shell" data-reveal>
+            <div>
+                <span class="gallery5-kicker">¿Quieres saber más?</span>
+                <h2>Seguimos construyendo nuestra historia contigo.</h2>
+                <p>Consulta las secciones institucionales o comunícate directamente con el colegio.</p>
+            </div>
+            <div class="institution7-final-actions">
+                <a href="{{ url_for('secciones') }}"><i class="bi bi-grid"></i><span><small>Explorar</small><strong>Secciones institucionales</strong></span></a>
+                <a href="{{ url_for('contacto') }}"><i class="bi bi-chat-dots"></i><span><small>Contacto</small><strong>Enviar un mensaje</strong></span></a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

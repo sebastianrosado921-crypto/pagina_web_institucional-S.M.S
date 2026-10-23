@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="es" data-bs-theme="light">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Portal web institucional de la Institución Educativa Distrital Santa Magdalena Sofía de Barranquilla.">
+    <meta name="theme-color" content="#102a72">
+    <title>{% block title %}IED Santa Magdalena Sofía{% endblock %}</title>
+
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div id="scrollProgress" class="scroll-progress" aria-hidden="true"></div>
+    <a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+    <div class="utility-bar">
+        <div class="container d-flex justify-content-between align-items-center gap-3">
+            <span><i class="bi bi-geo-alt-fill"></i> Barranquilla · Atlántico</span>
+            <div class="d-none d-md-flex gap-3">
+                <a href="{{ url_for('mapa_sitio') }}"><i class="bi bi-diagram-3"></i> Mapa del sitio</a>
+                {% if contacto_nav %}<a href="mailto:{{ contacto_nav.correo }}"><i class="bi bi-envelope"></i> {{ contacto_nav.correo }}</a>{% endif %}
+            </div>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-dark sticky-top glass-nav nav9-modern" aria-label="Navegación principal">
+        <div class="container nav9-container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url_for('inicio') }}">
+                <span class="brand-mark" aria-hidden="true">SMS</span>
+                <span class="brand-copy">
+                    <strong>Santa Magdalena Sofía</strong>
+                    <small>Institución Educativa Distrital</small>
+                </span>
+            </a>
+
+            <div class="nav9-primary d-none d-xl-flex" aria-label="Accesos principales">
+                <a class="nav9-link {% if request.endpoint == 'inicio' %}active{% endif %}" href="{{ url_for('inicio') }}">Inicio</a>
+                <a class="nav9-link {% if request.endpoint == 'institucion' %}active{% endif %}" href="{{ url_for('institucion') }}">Institución</a>
+                <a class="nav9-link {% if request.endpoint in ['equipo','perfil_docente','perfil_directivo'] %}active{% endif %}" href="{{ url_for('equipo') }}">Equipo</a>
+                <a class="nav9-link {% if request.endpoint in ['noticias','detalle_noticia'] %}active{% endif %}" href="{{ url_for('noticias') }}">Noticias</a>
+                <a class="nav9-link {% if request.endpoint in ['galerias','detalle_galeria','detalle_imagen'] %}active{% endif %}" href="{{ url_for('galerias') }}">Galería</a>
+                <a class="nav9-link {% if request.endpoint == 'contacto' %}active{% endif %}" href="{{ url_for('contacto') }}">Contacto</a>
+                <a class="nav9-link {% if request.endpoint == 'sian' %}active{% endif %}" href="{{ url_for('sian') }}">SIAN</a>
+            </div>
+
+            <div class="nav9-actions ms-auto">
+                <button class="nav9-icon-btn d-none d-xl-grid" type="button" data-bs-toggle="modal" data-bs-target="#modalBuscar" aria-label="Buscar en el sitio" title="Buscar">
+                    <i class="bi bi-search"></i>
+                </button>
+
+                <a class="nav9-admin-login d-none d-xl-flex" href="{{ url_for('admin_login') }}">
+                    <i class="bi bi-shield-lock"></i><span>Ingresar</span>
+                </a>
+                <a class="nav9-admin-register d-none d-xl-flex" href="{{ url_for('admin_registro') }}">
+                    <i class="bi bi-person-plus"></i><span>Registro</span>
+                </a>
+
+                <button id="themeToggle" class="nav9-icon-btn d-none d-xl-grid" type="button" aria-label="Cambiar tema" title="Cambiar tema">
+                    <i class="bi bi-moon-stars"></i>
+                </button>
+
+                <a class="nav9-mobile-login d-xl-none" href="{{ url_for('admin_login') }}" aria-label="Acceso administrativo" title="Acceso administrativo">
+                    <i class="bi bi-person-lock"></i>
+                </a>
+
+                <button class="nav9-explore-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#explorePanel" aria-controls="explorePanel" aria-label="Abrir menú Explorar">
+                    <span class="nav9-hamb"><i></i><i></i><i></i></span>
+                    <span class="d-none d-xxl-inline">Explorar</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="offcanvas offcanvas-end explore9-panel" tabindex="-1" id="explorePanel" aria-labelledby="explorePanelLabel">
+        <div class="explore9-head">
+            <div class="d-flex align-items-center gap-2">
+                <span class="brand-mark">SMS</span>
+                <div><small>Portal institucional</small><strong id="explorePanelLabel">Explorar</strong></div>
+            </div>
+            <button type="button" class="explore9-close" data-bs-dismiss="offcanvas" aria-label="Cerrar"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="offcanvas-body explore9-body">
+            <div class="explore9-search" role="button" data-bs-dismiss="offcanvas" data-bs-toggle="modal" data-bs-target="#modalBuscar">
+                <i class="bi bi-search"></i><span><small>Búsqueda rápida</small><strong>¿Qué necesitas encontrar?</strong></span><i class="bi bi-arrow-up-right"></i>
+            </div>
+
+            <div class="explore9-main-links">
+                <a href="{{ url_for('inicio') }}"><i class="bi bi-house-door"></i><span>Inicio</span></a>
+                <a href="{{ url_for('institucion') }}"><i class="bi bi-building"></i><span>Institución</span></a>
+                <a href="{{ url_for('equipo') }}"><i class="bi bi-people"></i><span>Equipo</span></a>
+                <a href="{{ url_for('noticias') }}"><i class="bi bi-newspaper"></i><span>Noticias</span></a>
+                <a href="{{ url_for('logros') }}"><i class="bi bi-trophy"></i><span>Logros</span></a>
+                <a href="{{ url_for('galerias') }}"><i class="bi bi-images"></i><span>Galería</span></a>
+                <a href="{{ url_for('videos') }}"><i class="bi bi-play-btn"></i><span>Videos</span></a>
+                <a href="{{ url_for('redes') }}"><i class="bi bi-broadcast-pin"></i><span>Conecta</span></a>
+                <a href="{{ url_for('contacto') }}"><i class="bi bi-chat-dots"></i><span>Contacto</span></a>
+                <a href="{{ url_for('sian') }}"><i class="bi bi-diagram-3"></i><span><strong>SIAN</strong></span></a>
+                <a href="{{ url_for('calendario') }}"><i class="bi bi-calendar3"></i><span>Calendario</span></a>
+                <a href="{{ url_for('preguntas_frecuentes') }}"><i class="bi bi-question-circle"></i><span>Preguntas frecuentes</span></a>
+                <a href="{{ url_for('mapa_sitio') }}"><i class="bi bi-diagram-3"></i><span>Mapa del sitio</span></a>
+</div>
+
+            <div class="explore9-section-title"><span>Secciones institucionales</span><a href="{{ url_for('secciones') }}">Ver todas <i class="bi bi-arrow-right"></i></a></div>
+            <div class="explore9-sections">
+                {% for item in nav_secciones %}
+                <a href="{{ url_for('detalle_seccion', id_seccion=item.id_seccion) }}">
+                    <span>{{ "%02d"|format(loop.index) }}</span><strong>{{ item.nombre }}</strong><i class="bi bi-arrow-up-right"></i>
+                </a>
+                {% else %}
+                <div class="explore9-empty">No hay secciones disponibles.</div>
+                {% endfor %}
+            </div>
+
+            <div class="explore9-admin-box">
+                <div class="explore9-admin-copy"><i class="bi bi-shield-check"></i><span><small>Gestión institucional</small><strong>Administración del portal</strong></span></div>
+                <div class="explore9-admin-actions">
+                    <a href="{{ url_for('admin_login') }}"><i class="bi bi-box-arrow-in-right"></i> Ingresar</a>
+                    <a href="{{ url_for('admin_registro') }}"><i class="bi bi-person-plus"></i> Solicitar registro</a>
+                </div>
+                <p>Las cuentas nuevas quedan pendientes de aprobación por un responsable autorizado.</p>
+            </div>
+
+            <button class="explore9-theme d-xl-none" id="themeToggleMobile" type="button"><i class="bi bi-moon-stars"></i><span>Cambiar apariencia</span></button>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalBuscar" tabindex="-1" aria-labelledby="buscarLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content search-modal">
+                <div class="modal-header border-0 pb-0">
+                    <div><span class="section-kicker">Búsqueda institucional</span><h2 class="h4 mb-0" id="buscarLabel">¿Qué necesitas encontrar?</h2></div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <form class="modal-body pt-4" action="{{ url_for('buscar') }}" method="get">
+                    <div class="input-group input-group-lg search-input-group">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input class="form-control" type="search" name="q" minlength="2" required autocomplete="off" placeholder="Ej. convivencia, calendario, proyectos..." aria-label="Buscar">
+                        <button class="btn btn-primary-modern" type="submit">Buscar</button>
+                    </div>
+                    <small class="text-secondary d-block mt-3">Busca en secciones, noticias y logros publicados.</small>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    {% with mensajes = get_flashed_messages(with_categories=true) %}
+    {% if mensajes %}
+    <div class="flash7-wrap" aria-live="polite">
+        <div class="container">
+            {% for categoria, mensaje in mensajes %}
+            <div class="flash7 alert alert-{{ 'success' if categoria == 'success' else 'danger' }} alert-dismissible fade show" role="alert">
+                <span class="flash7-icon">
+                    <i class="bi {{ 'bi-check2-circle' if categoria == 'success' else 'bi-exclamation-triangle' }}"></i>
+                </span>
+                <span>{{ mensaje }}</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <main id="contenido">{% block content %}{% endblock %}</main>
+
+    <footer class="site-footer">
+        <div class="container py-5">
+            <div class="row g-4 align-items-start">
+                <div class="col-lg-5">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <span class="brand-mark brand-mark-footer">SMS</span>
+                        <div><strong class="d-block fs-5">IED Santa Magdalena Sofía</strong><span class="text-footer-muted">Barranquilla, Atlántico</span></div>
+                    </div>
+                    <p class="text-footer-muted mb-0">Portal institucional dinámico, accesible y organizado para informar y conectar a toda la comunidad educativa.</p>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <h2 class="footer-title">Explorar</h2>
+                    <a href="{{ url_for('institucion') }}">Nuestra institución</a>
+                    <a href="{{ url_for('secciones') }}">Secciones</a>
+                    <a href="{{ url_for('noticias') }}">Noticias y novedades</a>
+                    <a href="{{ url_for('galerias') }}">Galería institucional</a>
+                    <a href="{{ url_for('videos') }}">Videos institucionales</a>
+                    <a href="{{ url_for('equipo') }}">Equipo institucional</a>
+                    <a href="{{ url_for('mapa_sitio') }}">Mapa del sitio</a>
+                    <a href="{{ url_for('admin_login') }}"><i class="bi bi-shield-lock"></i> Acceso administrativo</a>
+                    <a href="{{ url_for('admin_registro') }}"><i class="bi bi-person-plus"></i> Solicitar cuenta</a>
+                    <a href="{{ url_for('contacto') }}">Contacto</a>
+                    <a href="{{ url_for('sian') }}">SIAN</a>
+                </div>
+                <div class="col-6 col-lg-4">
+                    <h2 class="footer-title">Conecta</h2>
+                    <div class="footer-socials footer-socials-modern mb-3">
+                        {% for red in redes_nav[:5] %}
+                        <a class="footer-social-modern social-tone-{{ (loop.index0 % 5) + 1 }}" href="{{ red.url_enlace }}" target="_blank" rel="noopener noreferrer" aria-label="{{ red.plataforma }}" title="{{ red.plataforma }}">
+                            <span class="footer-social-glow"></span>
+                            <i class="bi {{ red.icono or 'bi-link-45deg' }}"></i>
+                            <span class="visually-hidden">{{ red.plataforma }}</span>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    
+                    <span class="text-footer-muted d-block mt-2">© <span id="currentYear"></span> IED Santa Magdalena Sofía</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <button id="backToTop" class="back-to-top" type="button" aria-label="Volver arriba"><i class="bi bi-arrow-up"></i></button>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

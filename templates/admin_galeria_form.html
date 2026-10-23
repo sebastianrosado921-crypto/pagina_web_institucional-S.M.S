@@ -1,0 +1,6 @@
+{% extends "admin_base.html" %}
+{% block heading %}Galería{% endblock %}
+{% block content %}
+<div class="admin8-page-head"><div><span>Álbum</span><h1>{{ 'Editar galería' if id_galeria else 'Nueva galería' }}.</h1></div><a class="admin8-secondary-btn" href="{{ url_for('admin_galerias') }}"><i class="bi bi-arrow-left"></i> Volver</a></div>
+<form method="post" class="admin8-form-card admin8-form-narrow"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><label>Nombre</label><input name="nombre" value="{{ galeria.get('nombre','') }}" required><label>Tipo / categoría</label><input name="tipo" value="{{ galeria.get('tipo','') or '' }}"><label>Descripción</label><textarea name="descripcion" rows="6">{{ galeria.get('descripcion','') or '' }}</textarea><div class="admin8-form-actions"><button class="admin8-primary-btn"><i class="bi bi-save"></i> Guardar</button></div></form>
+{% endblock %}

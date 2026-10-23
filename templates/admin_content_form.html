@@ -1,0 +1,14 @@
+{% extends "admin_base.html" %}
+{% block heading %}{{ config.singular }}{% endblock %}
+{% block content %}
+<div class="admin8-page-head"><div><span>{{ 'Edición' if item_id else 'Nuevo registro' }}</span><h1>{{ 'Editar' if item_id else 'Crear' }} {{ config.singular|lower }}.</h1></div><a class="admin8-secondary-btn" href="{{ url_for('admin_contenido_lista', tipo=tipo) }}"><i class="bi bi-arrow-left"></i> Volver</a></div>
+<form method="post" class="admin8-form-card admin8-form-narrow"><input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+{% for field in config.fields %}
+<div class="admin8-field"><label>{{ field.label }}</label>{% set val = registro.get(field.name, field.get('default','')) %}
+{% if field.type == 'textarea' %}<textarea name="{{ field.name }}" rows="6" {% if field.required %}required{% endif %}>{{ val or '' }}</textarea>
+{% elif field.type == 'select' %}<select name="{{ field.name }}">{% for choice in field.choices %}<option value="{{ choice }}" {% if val == choice %}selected{% endif %}>{{ choice }}</option>{% endfor %}</select>
+{% elif field.type == 'checkbox' %}<label class="admin8-check"><input type="checkbox" name="{{ field.name }}" {% if val %}checked{% endif %}><span>Mostrar en el portal</span></label>
+{% else %}<input type="{{ field.type }}" name="{{ field.name }}" value="{{ val or '' }}" {% if field.required %}required{% endif %}>{% endif %}</div>
+{% endfor %}
+<div class="admin8-form-actions"><button class="admin8-primary-btn"><i class="bi bi-save"></i> Guardar</button></div></form>
+{% endblock %}

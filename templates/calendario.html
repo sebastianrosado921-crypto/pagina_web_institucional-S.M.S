@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% block title %}Calendario Institucional | IED Santa Magdalena Sofía{% endblock %}
+{% block content %}
+
+{# ===== HERO ===== #}
+<section class="page-hero sections9-hero">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb breadcrumb-modern">
+                <li class="breadcrumb-item"><a href="{{ url_for('inicio') }}">Inicio</a></li>
+                <li class="breadcrumb-item active">Calendario institucional</li>
+            </ol>
+        </nav>
+        <span class="eyebrow eyebrow-light"><i class="bi bi-calendar3"></i> Cronograma escolar</span>
+        <h1>Calendario institucional</h1>
+        <p>Fechas importantes, jornadas, eventos culturales, deportivos, académicos y días no laborales del año escolar.</p>
+    </div>
+</section>
+
+{# ===== FILTRO SOLO POR MES ===== #}
+<section class="section-space" style="padding-top: 2rem;">
+    <div class="container">
+        <form class="row g-3 align-items-end" method="get" id="formFiltros">
+            <div class="col-md-8">
+                <label class="form-label small text-secondary mb-1"><i class="bi bi-calendar-month"></i> Mes y año</label>
+                <input type="month" class="form-control" name="mes" value="{{ mes_seleccionado }}" id="mesSelector" onchange="this.form.submit()">
+            </div>
+            <div class="col-md-4">
+                <a href="{{ url_for('calendario') }}" class="btn btn-outline-modern w-100">
+                    <i class="bi bi-x-lg"></i> Ver todo
+                </a>
+            </div>
+        </form>
+    </div>
+</section>
+
+{# ===== CALENDARIO: DÍAS A LA IZQUIERDA · EVENTOS A LA DERECHA ===== #}
+<section class="section-space" style="padding-top: 1rem;">
+    <div class="container">
+        {% set anio_actual = mes_seleccionado[:4] if mes_seleccionado else eventos[0].fecha_inicio.strftime('%Y') if eventos else '2026' %}
+        {% set mes_num = mes_seleccionado[5:] if mes_seleccionado else '09' %}
+        
+        {% set nombres_meses = {
+            '01': 'Enero', '02': 'Febrero', '03': 'Marzo', '04': 'Abril',
+            '05': 'Mayo', '06': 'Junio', '07': 'Julio', '08': 'Agosto',
+            '09': 'Septiembre', '10': 'Octubre', '11': 'Noviembre', '12': 'Diciembre'
+        } %}
+        {% set nombre_mes = nombres_meses[mes_num] %}
+        {% set dias_semana = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'] %}
+        
+        <div class="row gap-4">
+            {# 📅 LADO IZQUIERDO: DÍAS DEL MES #}
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm p-3 sticky-top" style="top: 1rem;">
+                    <h3 class="h5 fw-bold text-center mb-3">{{ nombre_mes }} {{ anio_actual }}</h3>
+                    
+                    {# Encabezado días de la semana #}
+                    <div class="d-grid mb-2" style="grid-template-columns: repeat(7, 1fr); gap: 2px; display: grid;">
+                        {% for d in dias_semana %}
+                        <div class="text-center small fw-semibold text-secondary py-1">{{ d }}</div>
+                        {% endfor %}
+                    </div>
+                    
+                    {# Días del mes #}
+                    <div class="d-grid" style="grid-template-columns: repeat(7, 1fr); gap: 2px; display: grid;">
+                        {% for dia in range(1, 32) %}
+                            {% set fecha_str = '%s-%s-%02d'|format(anio_actual, mes_num, dia) %}
+                            {% set hay_evento = false %}
+                            {% for ev in eventos %}
+                                {% if ev.fecha_inicio.strftime('%Y-%m-%d') == fecha_str %}
+                                    {% set hay_evento = true %}
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% set dia_actual = request.args.get('dia', None) %}
+                            {% set seleccionado = (dia_actual|int == dia) if dia_actual else false %}
+                            
+                            <a href="?mes={{ mes_seleccionado }}&dia={{ dia }}" 
+                               class="text-center py-2 rounded text-decoration-none border
+                                      {{ 'bg-primary text-white fw-bold' if seleccionado else 'bg-light' }}
+                                      position-relative d-block">
+                                {{ dia }}
+                                {% if hay_evento %}
+                                <span class="d-block mx-auto mt-1" style="width: 6px; height: 6px; background: #10b981; border-radius: 50%;"></span>
+                                {% endif %}
+                            </a>
+                        {% endfor %}
+                    </div>
+                    
+                    <p class="text-center small text-muted mt-3 mb-0">
+                        <span style="display:inline-block;width:8px;height:8px;background:#10b981;border-radius:50%;margin-right:4px;"></span>
+                        Días con eventos
+                    </p>
+                </div>
+            </div>
+            
+            {# 📋 LADO DERECHO: EVENTOS #}
+            <div class="col-md-7 flex-grow-1">
+                {% set dia_actual = request.args.get('dia', None) %}
+                {% set eventos_mostrar = [] %}
+                
+                {% if dia_actual %}
+                    {% for ev in eventos %}
+                        {% if ev.fecha_inicio.day == dia_actual|int %}
+                            {% set _ = eventos_mostrar.append(ev) %}
+                        {% endif %}
+                    {% endfor %}
+                    <h3 class="h5 fw-bold mb-3">Eventos del {{ dia_actual }} de {{ nombre_mes }}</h3>
+                {% else %}
+                    {% set eventos_mostrar = eventos %}
+                    <h3 class="h5 fw-bold mb-3">Todos los eventos de {{ nombre_mes }}</h3>
+                    <p class="text-muted small mb-3">Selecciona un día del calendario para ver solo sus eventos</p>
+                {% endif %}
+                
+                {% if not eventos_mostrar %}
+                <div class="text-center py-5">
+                    <i class="bi bi-calendar-x" style="font-size: 3rem; opacity: 0.3;"></i>
+                    <p class="mt-3 text-secondary">No hay eventos para este día.</p>
+                </div>
+                {% else %}
+                
+                <div class="eventos-lista">
+                    {% for evento in eventos_mostrar %}
+                    <div class="card border-0 shadow-sm mb-3">
+                        <div class="card-body p-4">
+                            <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+                                <span class="badge" style="background: {{ evento.color_etiqueta }}22; color: {{ evento.color_etiqueta }}; border: 1px solid {{ evento.color_etiqueta }}44;">
+                                    <i class="bi bi-tag"></i> {{ evento.tipo_evento|replace('_', ' ')|capitalize }}
+                                </span>
+                                {% if evento.es_dia_no_laboral %}
+                                <span class="badge bg-danger-subtle text-danger">No laboral</span>
+                                {% endif %}
+                                {% if evento.hora_inicio %}
+                                <small class="text-secondary"><i class="bi bi-clock"></i> {{ evento.hora_inicio.strftime('%H:%M') }}{% if evento.hora_fin %} - {{ evento.hora_fin.strftime('%H:%M') }}{% endif %}</small>
+                                {% endif %}
+                            </div>
+                            
+                            <h4 class="h6 fw-bold mb-2">{{ evento.titulo }}</h4>
+                            
+                            {% if evento.descripcion %}
+                            <p class="text-secondary small mb-2">{{ evento.descripcion }}</p>
+                            {% endif %}
+                            
+                            <div class="d-flex flex-wrap gap-3 small text-secondary">
+                                <span><i class="bi bi-calendar-event"></i> {{ evento.fecha_inicio.strftime('%d/%m/%Y') }}</span>
+                                {% if evento.fecha_fin and evento.fecha_fin != evento.fecha_inicio %}
+                                <span><i class="bi bi-calendar-range"></i> Hasta {{ evento.fecha_fin.strftime('%d/%m/%Y') }}</span>
+                                {% endif %}
+                                {% if evento.ubicacion %}
+                                <span><i class="bi bi-geo-alt"></i> {{ evento.ubicacion }}</span>
+                                {% endif %}
+                                {% if evento.responsable %}
+                                <span><i class="bi bi-person-badge"></i> {{ evento.responsable }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+a.text-decoration-none { text-decoration: none !important; }
+.dia-calendario:hover {
+    background: var(--bs-primary-bg-subtle) !important;
+    border-color: var(--bs-primary) !important;
+}
+.eventos-lista .card {
+    border-left: 4px solid transparent;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.eventos-lista .card:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+@media (max-width: 768px) {
+    .row.gap-4 { gap: 2rem !important; }
+}
+</style>
+{% endblock %}

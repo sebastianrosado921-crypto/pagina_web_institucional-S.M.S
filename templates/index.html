@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% block title %}Inicio | IED Santa Magdalena Sofía{% endblock %}
+{% block content %}
+
+{% if db_error %}
+<section class="db-alert-wrap"><div class="container"><div class="alert alert-warning border-0 shadow-sm mb-0"><strong>No fue posible conectar con PostgreSQL.</strong><div>Verifica la base <code>paginaWeb_SMS</code> y ejecuta los SQL acumulativos hasta la Entrega 9.</div></div></div></section>
+{% endif %}
+
+<section class="home9-hero">
+  <div id="hero9Carousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="7000" data-bs-pause="hover">
+    <div class="carousel-inner">
+      {% for slide in destacadas %}
+      <div class="carousel-item {% if loop.first %}active{% endif %}">
+        <div class="home9-slide">
+          <div class="home9-media" aria-hidden="true">
+            {% if slide.video_url %}
+            <video autoplay muted loop playsinline preload="metadata" {% if slide.imagen_url %}poster="{{ url_for('static', filename=slide.imagen_url.replace('/static/','')) if slide.imagen_url.startswith('/static/') else slide.imagen_url }}"{% endif %}>
+              <source src="{{ url_for('static', filename=slide.video_url.replace('/static/','')) if slide.video_url.startswith('/static/') else slide.video_url }}">
+            </video>
+            {% elif slide.imagen_url %}
+            <img src="{{ url_for('static', filename=slide.imagen_url.replace('/static/','')) if slide.imagen_url.startswith('/static/') else slide.imagen_url }}" alt="">
+            {% elif carrusel %}
+            <img src="{{ url_for('static', filename=carrusel[loop.index0 % (carrusel|length)].url_imagen.replace('/static/','')) if carrusel[loop.index0 % (carrusel|length)].url_imagen.startswith('/static/') else carrusel[loop.index0 % (carrusel|length)].url_imagen }}" alt="">
+            {% endif %}
+          </div>
+          <div class="home9-overlay"></div>
+          <div class="home9-lines"></div>
+          <div class="container position-relative home9-slide-container">
+            <div class="home9-copy" data-reveal>
+              <div class="home9-brandline"><span>IED Santa Magdalena Sofía</span><i></i><strong>Barranquilla</strong></div>
+              <span class="home9-kicker"><i class="bi {{ 'bi-calendar-event' if slide.tipo_contenido == 'EVENTO' else ('bi-megaphone' if slide.tipo_contenido == 'COMUNICADO' else 'bi-stars') }}"></i> {{ slide.tipo_contenido|title }}</span>
+              <h1>{{ slide.titulo }}</h1>
+              <p>{{ slide.resumen }}</p>
+              <div class="home9-actions">
+                <a href="{{ url_for('detalle_noticia', id_noticia=slide.id_noticia) }}" class="home9-primary">Conocer más <i class="bi bi-arrow-up-right"></i></a>
+                {% if slide.video_url %}<a href="{{ url_for('videos') }}" class="home9-secondary"><i class="bi bi-play-circle-fill"></i> Ver videos</a>{% else %}<a href="{{ url_for('equipo') }}" class="home9-secondary"><i class="bi bi-people"></i> Nuestro equipo</a>{% endif %}
+              </div>
+            </div>
+            <div class="home9-side" data-reveal>
+              <div class="home9-side-number">0{{ loop.index }}</div>
+              <span>{{ slide.fecha_publicacion.strftime('%d.%m.%Y') if slide.fecha_publicacion else 'Actualidad institucional' }}</span>
+              <strong>{{ 'Video institucional' if slide.video_url else 'Destacado del portal' }}</strong>
+              <p>Contenido administrado y publicado por personal autorizado de la institución.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <div class="carousel-item active"><div class="home9-slide home9-fallback"><div class="home9-overlay"></div><div class="container position-relative home9-slide-container"><div class="home9-copy"><div class="home9-brandline"><span>IED Santa Magdalena Sofía</span><i></i><strong>Barranquilla</strong></div><span class="home9-kicker"><i class="bi bi-stars"></i> Portal institucional</span><h1>Aprender, participar y transformar nuestro entorno.</h1><p>{{ institucion.descripcion_general if institucion else 'Portal institucional de Santa Magdalena Sofía.' }}</p><div class="home9-actions"><a href="{{ url_for('institucion') }}" class="home9-primary">Conocer la institución <i class="bi bi-arrow-up-right"></i></a></div></div></div></div></div>
+      {% endfor %}
+    </div>
+
+    {% if destacadas|length > 1 %}
+    <div class="home9-nav">
+      <button class="home9-arrow" type="button" data-bs-target="#hero9Carousel" data-bs-slide="prev" aria-label="Anterior"><i class="bi bi-arrow-left"></i></button>
+      <div class="home9-dots">
+        {% for slide in destacadas %}<button type="button" data-bs-target="#hero9Carousel" data-bs-slide-to="{{ loop.index0 }}" class="{% if loop.first %}active{% endif %}" aria-label="Destacado {{ loop.index }}"><span>0{{ loop.index }}</span></button>{% endfor %}
+      </div>
+      <button class="home9-arrow" type="button" data-bs-target="#hero9Carousel" data-bs-slide="next" aria-label="Siguiente"><i class="bi bi-arrow-right"></i></button>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="home9-quick-shell">
+    <div class="container">
+      <div class="home9-quick">
+        <a href="{{ url_for('institucion') }}"><i class="bi bi-building"></i><span><strong>Institución</strong><small>Identidad e historia</small></span></a>
+        <a href="{{ url_for('noticias') }}"><i class="bi bi-newspaper"></i><span><strong>Actualidad</strong><small>Noticias y eventos</small></span></a>
+        <a href="{{ url_for('videos') }}"><i class="bi bi-play-btn"></i><span><strong>Videos</strong><small>Eventos en movimiento</small></span></a>
+        <a href="{{ url_for('equipo') }}"><i class="bi bi-people"></i><span><strong>Equipo</strong><small>Rectoría y docentes</small></span></a>
+        <a href="{{ url_for('galerias') }}"><i class="bi bi-images"></i><span><strong>Galería</strong><small>Momentos institucionales</small></span></a>
+        <a href="{{ url_for('contacto') }}"><i class="bi bi-chat-square-text"></i><span><strong>Contacto</strong><small>Estamos para orientarte</small></span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="home9-metrics"><div class="container"><div class="home9-metric-grid">
+  <div><strong data-counter="{{ metricas.noticias }}">0</strong><span>Publicaciones</span></div>
+  <div><strong data-counter="{{ metricas.videos }}">0</strong><span>Videos</span></div>
+  <div><strong data-counter="{{ metricas.logros }}">0</strong><span>Logros</span></div>
+  <div><strong data-counter="{{ metricas.galerias }}">0</strong><span>Álbumes</span></div>
+  <div><strong data-counter="{{ metricas.personal }}">0</strong><span>Integrantes</span></div>
+</div></div></section>
+
+<section class="home9-section home9-identity-section">
+  <div class="container">
+    <div class="home9-heading" data-reveal><div><span class="modern-kicker">Nuestra esencia</span><h2>Una institución con propósito y dirección.</h2></div><a href="{{ url_for('institucion') }}">Conocer más <i class="bi bi-arrow-up-right"></i></a></div>
+    <div class="home9-identity-grid">
+      <article class="home9-mini-card" data-reveal><span>01</span><i class="bi bi-bullseye"></i><div><small>Misión</small><h3>Lo que nos mueve hoy.</h3><p>{{ institucion.mision if institucion else 'Misión institucional.' }}</p></div></article>
+      <article class="home9-mini-card" data-reveal><span>02</span><i class="bi bi-binoculars"></i><div><small>Visión</small><h3>Hacia dónde avanzamos.</h3><p>{{ institucion.vision if institucion else 'Visión institucional.' }}</p></div></article>
+    </div>
+  </div>
+</section>
+
+{% if videos_destacados %}
+<section class="home9-section home9-video-section">
+  <div class="container">
+    <div class="home9-heading home9-heading-light" data-reveal><div><span class="modern-kicker">En movimiento</span><h2>La vida institucional también se cuenta en video.</h2></div><a href="{{ url_for('videos') }}">Ver todos <i class="bi bi-arrow-up-right"></i></a></div>
+    <div class="home9-video-grid">
+      {% for item in videos_destacados %}
+      <article class="home9-video-card" data-reveal>
+        <a class="home9-video-media" href="{{ url_for('detalle_noticia', id_noticia=item.id_noticia) }}">
+          <video muted loop playsinline preload="metadata" {% if item.imagen_url %}poster="{{ url_for('static', filename=item.imagen_url.replace('/static/','')) if item.imagen_url.startswith('/static/') else item.imagen_url }}"{% endif %}>
+            <source src="{{ url_for('static', filename=item.video_url.replace('/static/','')) if item.video_url.startswith('/static/') else item.video_url }}">
+          </video>
+          <span class="home9-play"><i class="bi bi-play-fill"></i></span>
+        </a>
+        <div><small>{{ item.tipo_contenido|title }}</small><h3>{{ item.titulo }}</h3><p>{{ item.resumen }}</p><a href="{{ url_for('detalle_noticia', id_noticia=item.id_noticia) }}">Abrir publicación <i class="bi bi-arrow-right"></i></a></div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="home9-section home9-news-section">
+  <div class="container">
+    <div class="home9-heading" data-reveal><div><span class="modern-kicker">Actualidad</span><h2>Lo que está pasando, sin ruido.</h2></div><a href="{{ url_for('noticias') }}">Todas las publicaciones <i class="bi bi-arrow-up-right"></i></a></div>
+    <div class="home9-news-grid">
+      {% for item in noticias[:6] %}
+      <article class="home9-news-card" data-reveal>
+        <a class="home9-news-media" href="{{ url_for('detalle_noticia', id_noticia=item.id_noticia) }}">
+          {% if item.imagen_url %}<img src="{{ url_for('static', filename=item.imagen_url.replace('/static/','')) if item.imagen_url.startswith('/static/') else item.imagen_url }}" alt="{{ item.titulo }}" loading="lazy">{% else %}<div class="home9-news-fallback"><i class="bi bi-newspaper"></i></div>{% endif %}
+          {% if item.video_url %}<span class="home9-video-badge"><i class="bi bi-play-fill"></i> Video</span>{% endif %}
+          <span class="home9-type">{{ item.tipo_contenido|title }}</span>
+        </a>
+        <div class="home9-news-body"><small>{{ item.fecha_publicacion.strftime('%d %b %Y') if item.fecha_publicacion else 'Actualidad' }}</small><h3><a href="{{ url_for('detalle_noticia', id_noticia=item.id_noticia) }}">{{ item.titulo }}</a></h3><p>{{ item.resumen }}</p><a href="{{ url_for('detalle_noticia', id_noticia=item.id_noticia) }}">Leer <i class="bi bi-arrow-right"></i></a></div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="home9-section home9-explore-section">
+  <div class="container">
+    <div class="home9-heading" data-reveal><div><span class="modern-kicker">Explora</span><h2>Información institucional, mejor organizada.</h2></div><a href="{{ url_for('secciones') }}">Todas las secciones <i class="bi bi-arrow-up-right"></i></a></div>
+    <div class="home9-explore-grid">
+      {% for s in secciones %}<a class="home9-explore-card" data-reveal href="{{ url_for('detalle_seccion', id_seccion=s.id_seccion) }}"><span>{{ '%02d'|format(s.orden_menu) }}</span><div><h3>{{ s.nombre }}</h3><p>{{ s.descripcion or 'Información para nuestra comunidad educativa.' }}</p></div><i class="bi bi-arrow-up-right"></i></a>{% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="home9-section home9-bottom-section">
+  <div class="container"><div class="home9-bottom-grid">
+    <div class="home9-achievements" data-reveal><div class="home9-heading"><div><span class="modern-kicker">Orgullo institucional</span><h2>Logros que hablan del trabajo colectivo.</h2></div><a href="{{ url_for('logros') }}">Ver logros</a></div>
+      <div class="home9-achievement-list">{% for logro in logros %}<a href="{{ url_for('detalle_logro', id_logro=logro.id_logro) }}"><span><i class="bi bi-trophy"></i></span><div><small>{{ logro.categoria or 'Institucional' }}</small><h3>{{ logro.titulo }}</h3></div><i class="bi bi-arrow-up-right"></i></a>{% endfor %}</div>
+    </div>
+    <div class="home9-contact-card" data-reveal><span class="modern-kicker">Encuéntranos</span><h2>Santa Magdalena Sofía, Barranquilla.</h2><p>{{ contacto.direccion if contacto else 'Barranquilla, Atlántico' }}</p><div class="home9-contact-actions"><a href="https://www.google.com/maps/search/?api=1&query=Instituci%C3%B3n+Educativa+Distrital+Santa+Magdalena+Sof%C3%ADa%2C+Calle+84B+76-82%2C+Barranquilla" target="_blank" rel="noopener noreferrer"><i class="bi bi-geo-alt"></i> Abrir Google Maps</a><a href="{{ url_for('contacto') }}"><i class="bi bi-chat-dots"></i> Contactar</a></div></div>
+  </div></div>
+</section>
+
+{% endblock %}

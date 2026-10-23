@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}{% if evento %}Editar{% else %}Nuevo{% endif %} Evento{% endblock %}
+{% block content %}
+<section class="section-space">
+    <div class="container" style="max-width:700px">
+        <h1 class="mb-4">{% if evento %}✏️ Editar Evento{% else %}➕ Nuevo Evento{% endif %}</h1>
+        <form method="post">
+            <div class="mb-3">
+                <label class="form-label">Título *</label>
+                <input type="text" name="titulo" class="form-control" required value="{{ evento.titulo if evento else '' }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Descripción</label>
+                <textarea name="descripcion" class="form-control" rows="3">{{ evento.descripcion if evento else '' }}</textarea>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Fecha Inicio *</label>
+                    <input type="date" name="fecha_inicio" class="form-control" required value="{{ evento.fecha_inicio.strftime('%Y-%m-%d') if evento else '' }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Fecha Fin</label>
+                    <input type="date" name="fecha_fin" class="form-control" value="{{ evento.fecha_fin.strftime('%Y-%m-%d') if evento and evento.fecha_fin else '' }}">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Hora Inicio</label>
+                    <input type="time" name="hora_inicio" class="form-control" value="{{ evento.hora_inicio.strftime('%H:%M') if evento and evento.hora_inicio else '' }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Hora Fin</label>
+                    <input type="time" name="hora_fin" class="form-control" value="{{ evento.hora_fin.strftime('%H:%M') if evento and evento.hora_fin else '' }}">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Tipo de Evento</label>
+                    <select name="tipo_evento" class="form-select">
+                        {% set tipos = ['ACADEMICO','CULTURAL','DEPORTIVO','INSTITUCIONAL','FESTIVO','OTRO'] %}
+                        {% for t in tipos %}
+                        <option value="{{ t }}" {% if evento and evento.tipo_evento==t %}selected{% endif %}>{{ t|replace('_',' ')|capitalize }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Color</label>
+                    <input type="color" name="color_etiqueta" class="form-control form-control-color" value="{{ evento.color_etiqueta if evento else '#0d6efd' }}">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Ubicación</label>
+                    <input type="text" name="ubicacion" class="form-control" value="{{ evento.ubicacion if evento else '' }}">
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Responsable</label>
+                <input type="text" name="responsable" class="form-control" value="{{ evento.responsable if evento else '' }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-check-label">
+                    <input class="form-check-input" type="checkbox" name="es_dia_no_laboral" {% if evento and evento.es_dia_no_laboral %}checked{% endif %}>
+                    Es día no laboral
+                </label>
+                &nbsp;&nbsp;
+                <label class="form-check-label">
+                    <input class="form-check-input" type="checkbox" name="visible_publico" {% if not evento or evento.visible_publico %}checked{% endif %}>
+                    Visible al público
+                </label>
+            </div>
+            <button type="submit" class="btn btn-primary">💾 Guardar</button>
+            <a href="{{ url_for('admin_calendario') }}" class="btn btn-outline-secondary">Cancelar</a>
+        </form>
+    </div>
+</section>
+{% endblock %}

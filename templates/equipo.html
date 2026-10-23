@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block title %}Equipo Institucional | IED Santa Magdalena Sofía{% endblock %}
+{% block content %}
+<section class="team8-hero">
+  <div class="team8-hero-art"></div>
+  <div class="container position-relative">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb breadcrumb-modern achievements-breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('inicio') }}">Inicio</a></li>
+        <li class="breadcrumb-item active">Equipo Institucional</li>
+      </ol>
+    </nav>
+    <div class="team8-hero-copy" data-reveal>
+      <span class="gallery5-kicker"><i class="bi bi-people-fill"></i> Talento humano</span>
+      <h1>Personas que acompañan, orientan y hacen posible nuestra misión.</h1>
+      <p>Conoce a rectoría, coordinaciones y docentes de la IED Santa Magdalena Sofía. La información se administra directamente desde el portal institucional.</p>
+    </div>
+    <div class="team8-stat-bar" data-reveal>
+      <div><strong data-counter="{{ metricas.docentes }}">0</strong><span>Docentes visibles</span></div>
+      <div><strong data-counter="{{ metricas.areas }}">0</strong><span>Áreas académicas</span></div>
+      <div><strong data-counter="{{ metricas.directivos }}">0</strong><span>Directivos visibles</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="team8-leadership">
+  <div class="container">
+    <div class="team8-section-head text-center" data-reveal>
+      <span class="modern-kicker">Equipo directivo</span>
+      <h2>Rectoría y coordinación.</h2>
+      <p>Responsables de orientar los procesos institucionales y acompañar a la comunidad educativa.</p>
+    </div>
+
+    {% if rectoria %}
+    <div class="team8-role-title" data-reveal>RECTORÍA</div>
+    <div class="team8-rector-grid">
+      {% for p in rectoria %}
+      <a class="team8-leader-card team8-leader-main tilt-lite" data-reveal href="{{ url_for('perfil_directivo', id_administrativo=p.id_administrativo) }}">
+        <div class="team8-leader-photo">
+          {% if p.foto_url %}<img src="{{ url_for('static', filename=p.foto_url.replace('/static/','')) if p.foto_url.startswith('/static/') else p.foto_url }}" alt="{{ p.nombres }} {{ p.apellidos }}">
+          {% else %}<span>{{ p.nombres[:1] }}{{ p.apellidos[:1] }}</span>{% endif %}
+        </div>
+        <div class="team8-leader-info">
+          <small>{{ p.dependencia or 'Rectoría' }}</small>
+          <h3>{{ p.nombres }} {{ p.apellidos }}</h3>
+          <span>{{ p.cargo }}</span>
+          <p>{{ p.biografia or 'Liderazgo institucional orientado al bienestar y a la calidad educativa.' }}</p>
+        </div>
+        <i class="bi bi-arrow-up-right"></i>
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if coordinaciones %}
+    <div class="team8-role-title mt-5" data-reveal>COORDINACIONES</div>
+    <div class="team8-coordinator-grid">
+      {% for p in coordinaciones %}
+      <a class="team8-leader-card tilt-lite" data-reveal href="{{ url_for('perfil_directivo', id_administrativo=p.id_administrativo) }}">
+        <div class="team8-leader-photo">
+          {% if p.foto_url %}<img src="{{ url_for('static', filename=p.foto_url.replace('/static/','')) if p.foto_url.startswith('/static/') else p.foto_url }}" alt="{{ p.nombres }} {{ p.apellidos }}">
+          {% else %}<span>{{ p.nombres[:1] }}{{ p.apellidos[:1] }}</span>{% endif %}
+        </div>
+        <div class="team8-leader-info">
+          <small>{{ p.dependencia or 'Coordinación' }}</small>
+          <h3>{{ p.nombres }} {{ p.apellidos }}</h3>
+          <span>{{ p.cargo }}</span>
+          <p>{{ p.biografia or 'Acompañamiento y orientación de procesos institucionales.' }}</p>
+        </div>
+        <i class="bi bi-arrow-up-right"></i>
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="team8-faculty">
+  <div class="container">
+    <div class="team8-faculty-intro" data-reveal>
+      <span class="modern-kicker">Cuerpo docente</span>
+      <h2>Educadores que inspiran el aprendizaje.</h2>
+      <p>Explora el equipo por área académica o utiliza el buscador. Las fotografías y perfiles pueden actualizarse desde Administración.</p>
+    </div>
+
+    <form class="team8-tools" method="get" action="{{ url_for('equipo') }}" data-reveal>
+      <div class="team8-search"><i class="bi bi-search"></i><input type="search" name="q" value="{{ q }}" placeholder="Buscar por nombre, área o cargo..."></div>
+      <select name="area"><option value="">Todas las áreas</option>{% for item in areas %}<option value="{{ item }}" {% if item == area %}selected{% endif %}>{{ item }}</option>{% endfor %}</select>
+      <button type="submit">Filtrar</button>
+      {% if q or area %}<a href="{{ url_for('equipo') }}"><i class="bi bi-x-lg"></i></a>{% endif %}
+    </form>
+
+    <div class="team8-chip-row" data-reveal>
+      <a class="{% if not area %}active{% endif %}" href="{{ url_for('equipo', q=q) }}">Todos</a>
+      {% for item in areas[:8] %}<a class="{% if area == item %}active{% endif %}" href="{{ url_for('equipo', area=item, q=q) }}">{{ item }}</a>{% endfor %}
+    </div>
+
+    <div class="team8-teacher-grid">
+      {% for p in docentes %}
+      <a class="team8-teacher-card tilt-lite" data-reveal href="{{ url_for('perfil_docente', id_docente=p.id_docente) }}">
+        <div class="team8-teacher-photo">
+          {% if p.foto_url %}<img src="{{ url_for('static', filename=p.foto_url.replace('/static/','')) if p.foto_url.startswith('/static/') else p.foto_url }}" alt="{{ p.nombres }} {{ p.apellidos }}" loading="lazy">
+          {% else %}<span>{{ p.nombres[:1] }}{{ p.apellidos[:1] }}</span>{% endif %}
+          <small>{{ p.area or p.cargo }}</small>
+        </div>
+        <div class="team8-teacher-body">
+          <h3>{{ p.nombres }} {{ p.apellidos }}</h3>
+          <strong><i class="bi bi-book"></i> {{ p.cargo }}</strong>
+          {% if p.anios_experiencia %}<span><i class="bi bi-calendar-check"></i> {{ p.anios_experiencia }} años de experiencia</span>{% endif %}
+          <p>{{ p.biografia or 'Docente comprometido con el aprendizaje y la formación integral.' }}</p>
+          <div>Ver perfil <i class="bi bi-arrow-up-right"></i></div>
+        </div>
+      </a>
+      {% else %}
+      <div class="empty-state grid-column-full"><i class="bi bi-person-x"></i><h3>No encontramos docentes</h3><p>Prueba otro filtro o consulta todos los perfiles.</p></div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="team8-admin-note">
+  <div class="container">
+    <div class="team8-admin-shell" data-reveal>
+      <div><span class="gallery5-kicker">Información actualizable</span><h2>El equipo puede mantenerse al día sin tocar el código.</h2><p>El administrador autorizado puede cargar fotografías, editar perfiles, organizar cargos y controlar qué personas aparecen públicamente.</p></div>
+      <a href="{{ url_for('admin_login') }}"><i class="bi bi-shield-lock"></i><span><small>Acceso restringido</small><strong>Administrar portal</strong></span><i class="bi bi-arrow-up-right"></i></a>
+    </div>
+  </div>
+</section>
+{% endblock %}

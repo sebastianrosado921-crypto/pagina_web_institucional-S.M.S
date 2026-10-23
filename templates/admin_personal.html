@@ -1,0 +1,18 @@
+{% extends "admin_base.html" %}
+{% block heading %}Equipo institucional{% endblock %}
+{% block content %}
+<div class="admin8-page-head"><div><span>Talento humano</span><h1>Rectoría, coordinación y docentes.</h1><p>Controla fotografías, cargos, perfiles y visibilidad pública.</p></div><div class="admin8-button-row"><a class="admin8-secondary-btn" href="{{ url_for('admin_persona_form', tipo='administrativo') }}"><i class="bi bi-person-plus"></i> Directivo/administrativo</a><a class="admin8-primary-btn" href="{{ url_for('admin_persona_form', tipo='docente') }}"><i class="bi bi-person-plus-fill"></i> Docente</a></div></div>
+<div class="admin8-tabs"><button class="active" data-admin-tab="docentes">Docentes ({{ docentes|length }})</button><button data-admin-tab="administrativos">Directivos y administrativos ({{ administrativos|length }})</button></div>
+<div class="admin8-people-grid" data-admin-panel="docentes">
+{% for p in docentes %}
+<article class="admin8-person"><div class="admin8-person-photo">{% if p.foto_url %}<img src="{{ url_for('static', filename=p.foto_url.replace('/static/','')) if p.foto_url.startswith('/static/') else p.foto_url }}">{% else %}<span>{{ p.nombres[:1] }}{{ p.apellidos[:1] }}</span>{% endif %}</div>
+<div><small>{{ p.area or p.cargo }}</small><h3>{{ p.nombres }} {{ p.apellidos }}</h3><p>{{ p.cargo }}</p><span class="admin8-visibility {{ 'on' if p.visible else 'off' }}">{{ 'Visible' if p.visible else 'Oculto' }}</span></div>
+<div class="admin8-person-actions"><a href="{{ url_for('admin_persona_form', tipo='docente', persona_id=p.id) }}"><i class="bi bi-pencil"></i></a><form method="post" action="{{ url_for('admin_persona_eliminar', tipo='docente', persona_id=p.id) }}" onsubmit="return confirm('¿Eliminar docente?');"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button><i class="bi bi-trash"></i></button></form></div></article>
+{% endfor %}</div>
+<div class="admin8-people-grid d-none" data-admin-panel="administrativos">
+{% for p in administrativos %}
+<article class="admin8-person"><div class="admin8-person-photo">{% if p.foto_url %}<img src="{{ url_for('static', filename=p.foto_url.replace('/static/','')) if p.foto_url.startswith('/static/') else p.foto_url }}">{% else %}<span>{{ p.nombres[:1] }}{{ p.apellidos[:1] }}</span>{% endif %}</div>
+<div><small>{{ p.area or p.cargo }}</small><h3>{{ p.nombres }} {{ p.apellidos }}</h3><p>{{ p.cargo }}</p><span class="admin8-visibility {{ 'on' if p.visible else 'off' }}">{{ 'Visible' if p.visible else 'Oculto' }}</span>{% if p.usuario_web %}<span class="admin8-account"><i class="bi bi-shield-lock"></i> {{ p.usuario_web }} · {{ p.rol_web }}</span>{% if not p.activo_web %}<span class="admin9-pending-account"><i class="bi bi-hourglass-split"></i> Pendiente de aprobación</span>{% endif %}{% endif %}</div>
+<div class="admin8-person-actions"><a href="{{ url_for('admin_persona_form', tipo='administrativo', persona_id=p.id) }}"><i class="bi bi-pencil"></i></a><form method="post" action="{{ url_for('admin_persona_eliminar', tipo='administrativo', persona_id=p.id) }}" onsubmit="return confirm('¿Eliminar registro?');"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button><i class="bi bi-trash"></i></button></form></div></article>
+{% endfor %}</div>
+{% endblock %}

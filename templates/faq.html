@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% block title %}Preguntas frecuentes | IED Santa Magdalena Sofía{% endblock %}
+{% block content %}
+
+{# ===== HERO ===== #}
+<section class="page-hero sections9-hero">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb breadcrumb-modern">
+                <li class="breadcrumb-item"><a href="{{ url_for('inicio') }}">Inicio</a></li>
+                <li class="breadcrumb-item active">Preguntas frecuentes</li>
+            </ol>
+        </nav>
+        <span class="eyebrow eyebrow-light"><i class="bi bi-question-circle"></i> Respuestas rápidas</span>
+        <h1>Preguntas frecuentes</h1>
+        <p>Respuestas oficiales a las dudas más comunes de familias, estudiantes y comunidad educativa. Si no encuentras lo que buscas, <a href="{{ url_for('contacto') }}" class="text-white text-decoration-underline">contáctanos</a>.</p>
+    </div>
+</section>
+
+{# ===== CONTENIDO FAQ ===== #}
+<section class="section-space">
+    <div class="container">
+        {% if categorias %}
+        <div class="row g-4">
+            {# ÍNDICE LATERAL #}
+            <div class="col-lg-3">
+                <div class="sticky-top" style="top: 90px;">
+                    <div class="card border-0 shadow-sm p-3">
+                        <h2 class="h6 mb-3 text-secondary">Índice de categorías</h2>
+                        <nav class="nav flex-column gap-1">
+                            {% for cat, preguntas in categorias.items() %}
+                            <a class="nav-link px-2 py-1 rounded" href="#cat-{{ cat|lower }}" style="font-size: 0.9rem;">
+                                <i class="bi bi-chevron-right me-1 opacity-50"></i>
+                                {{ cat|replace('_', ' ')|capitalize }}
+                                <span class="badge bg-light text-secondary ms-1">{{ preguntas|length }}</span>
+                            </a>
+                            {% endfor %}
+                        </nav>
+                        <hr>
+                        <div class="text-center">
+                            <small class="text-secondary d-block mb-2">¿No encuentras tu respuesta?</small>
+                            <a href="{{ url_for('contacto') }}" class="btn btn-primary-modern btn-sm w-100">
+                                <i class="bi bi-chat-dots"></i> Envía tu consulta
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# PREGUNTAS POR CATEGORÍA #}
+            <div class="col-lg-9">
+                {% for cat, preguntas in categorias.items() %}
+                <section id="cat-{{ cat|lower }}" class="mb-5" data-reveal>
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        {% set iconos = {
+                            'GENERAL': 'bi-info-circle',
+                            'ADMISIONES': 'bi-person-check',
+                            'HORARIOS': 'bi-clock',
+                            'PAGOS': 'bi-credit-card',
+                            'ACADEMICO': 'bi-book',
+                            'CONVIVENCIA': 'bi-heart',
+                            'TECNOLOGIA': 'bi-laptop',
+                            'SEGURIDAD': 'bi-shield-check',
+                            'SERVICIOS': 'bi-bag-check'
+                        } %}
+                        <span class="faq-cat-icon"><i class="bi {{ iconos.get(cat, 'bi-question-circle') }}"></i></span>
+                        <h2 class="h4 mb-0">{{ cat|replace('_', ' ')|capitalize }}</h2>
+                        <span class="badge bg-light text-secondary ms-auto">{{ preguntas|length }} preguntas</span>
+                    </div>
+
+                    <div class="accordion accordion-flush faq-accordion" id="accordion-{{ cat|lower }}">
+                        {% for p in preguntas %}
+                        <div class="accordion-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#collapse-{{ p.id_faq }}"
+                                        aria-expanded="false"
+                                        aria-controls="collapse-{{ p.id_faq }}">
+                                    <span class="faq-num">{{ loop.index }}</span>
+                                    <span>{{ p.pregunta }}</span>
+                                </button>
+                            </h3>
+                            <div id="collapse-{{ p.id_faq }}" class="accordion-collapse collapse" data-bs-parent="#accordion-{{ cat|lower }}">
+                                <div class="accordion-body">
+                                    {{ p.respuesta }}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </section>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% else %}
+        <div class="empty-state text-center py-5">
+            <i class="bi bi-question-circle" style="font-size: 3rem; opacity: 0.4;"></i>
+            <h2 class="h4 mt-3">Preguntas frecuentes en construcción</h2>
+            <p class="text-secondary">Estamos preparando esta sección. Mientras tanto, usa nuestro formulario de contacto.</p>
+            <a class="btn btn-primary-modern" href="{{ url_for('contacto') }}">Ir a contacto</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{# ===== ESTILOS ESPECÍFICOS FAQ ===== #}
+<style>
+.faq-cat-icon {
+    width: 42px; height: 42px;
+    display: grid; place-items: center;
+    background: linear-gradient(135deg, var(--bs-primary), #4d7cff);
+    color: white; border-radius: 12px;
+    font-size: 1.2rem;
+}
+.faq-accordion { border-radius: 12px; overflow: hidden; border: 1px solid var(--bs-border-color); }
+.faq-accordion .accordion-item { border: none; border-bottom: 1px solid var(--bs-border-color); }
+.faq-accordion .accordion-item:last-child { border-bottom: none; }
+.faq-accordion .accordion-button {
+    padding: 1rem 1.25rem;
+    font-weight: 500;
+    gap: 0.75rem;
+    background: transparent;
+}
+.faq-accordion .accordion-button:not(.collapsed) {
+    background: var(--bs-primary-bg-subtle);
+    color: var(--bs-primary-text-emphasis);
+    box-shadow: none;
+}
+.faq-accordion .accordion-button:focus { box-shadow: none; }
+.faq-num {
+    flex-shrink: 0;
+    width: 28px; height: 28px;
+    display: grid; place-items: center;
+    background: var(--bs-tertiary-bg);
+    border-radius: 50%;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--bs-secondary);
+}
+.faq-accordion .accordion-button:not(.collapsed) .faq-num {
+    background: var(--bs-primary);
+    color: white;
+}
+.faq-accordion .accordion-body {
+    padding: 1rem 1.25rem 1.25rem 3.25rem;
+    color: var(--bs-secondary-color);
+    line-height: 1.7;
+}
+</style>
+
+{% endblock %}

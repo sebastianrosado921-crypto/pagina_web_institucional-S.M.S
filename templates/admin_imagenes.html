@@ -1,0 +1,12 @@
+{% extends "admin_base.html" %}
+{% block heading %}Imágenes: {{ galeria.nombre }}{% endblock %}
+{% block content %}
+<div class="admin8-page-head"><div><span>{{ galeria.tipo or 'Galería' }}</span><h1>{{ galeria.nombre }}</h1><p>Sube nuevas imágenes, reemplázalas, edita su pie de foto o elimínalas.</p></div><a class="admin8-secondary-btn" href="{{ url_for('admin_galerias') }}"><i class="bi bi-arrow-left"></i> Galerías</a></div>
+<form method="post" enctype="multipart/form-data" class="admin8-upload-card"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><div><i class="bi bi-cloud-arrow-up"></i><span><strong>Subir nueva imagen</strong><small>PNG, JPG o WEBP · máximo 6 MB</small></span></div><input type="file" name="imagen" accept=".png,.jpg,.jpeg,.webp" required><input name="pie_foto" placeholder="Pie de foto"><button class="admin8-primary-btn"><i class="bi bi-upload"></i> Cargar</button></form>
+<div class="admin8-image-grid">
+{% for img in imagenes %}
+<article class="admin8-image-card"><img src="{{ url_for('static', filename=img.url_imagen.replace('/static/','')) if img.url_imagen.startswith('/static/') else img.url_imagen }}" alt="{{ img.pie_foto or galeria.nombre }}">
+<form method="post" enctype="multipart/form-data" action="{{ url_for('admin_imagen_actualizar', id_imagen=img.id_imagen) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input name="pie_foto" value="{{ img.pie_foto or '' }}" placeholder="Pie de foto"><input type="file" name="imagen" accept=".png,.jpg,.jpeg,.webp"><button><i class="bi bi-save"></i> Actualizar</button></form>
+<form method="post" action="{{ url_for('admin_imagen_eliminar', id_imagen=img.id_imagen) }}" onsubmit="return confirm('¿Eliminar imagen?');"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="danger"><i class="bi bi-trash"></i> Eliminar</button></form></article>
+{% else %}<div class="admin8-empty"><i class="bi bi-image"></i><strong>Esta galería aún no tiene imágenes.</strong></div>{% endfor %}
+</div>{% endblock %}

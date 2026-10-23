@@ -1,0 +1,3 @@
+{% extends "base.html" %}
+{% block title %}Página no encontrada | IED Santa Magdalena Sofía{% endblock %}
+{% block content %}<section class="error-page"><div class="container text-center"><div class="error-code">404</div><span class="section-kicker">Página no encontrada</span><h1>Ese camino no existe en nuestro portal</h1><p>La dirección pudo cambiar o el contenido ya no está disponible.</p><div class="d-flex justify-content-center flex-wrap gap-2"><a class="btn btn-primary-modern" href="{{ url_for('inicio') }}">Volver al inicio</a><a class="btn btn-outline-modern" href="{{ url_for('secciones') }}">Explorar secciones</a></div></div></section>{% endblock %}

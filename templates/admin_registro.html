@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Solicitud de registro | SMS</title><meta name="robots" content="noindex,nofollow">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/admin.css') }}" rel="stylesheet">
+</head>
+<body class="admin8-login-body admin9-register-body">
+  <div class="admin8-login-art"></div>
+  <main class="admin9-register-shell">
+    <section class="admin9-register-side">
+      <span class="admin8-login-kicker"><i class="bi bi-person-badge"></i> Registro administrativo</span>
+      <h1>Solicita una cuenta para gestionar el portal.</h1>
+      <p>El registro no habilita acceso automático. La solicitud queda <strong>pendiente</strong> hasta que Rectoría o un Superadmin valide tu vínculo y autorice el rol correspondiente.</p>
+      <div class="admin9-register-steps">
+        <div><span>01</span><p><strong>Registra tus datos</strong><small>Identificación institucional y usuario.</small></p></div>
+        <div><span>02</span><p><strong>Revisión interna</strong><small>Un responsable verifica la solicitud.</small></p></div>
+        <div><span>03</span><p><strong>Activación</strong><small>Se asignan rol y permisos.</small></p></div>
+      </div>
+      <a href="{{ url_for('inicio') }}"><i class="bi bi-arrow-left"></i> Volver al portal público</a>
+    </section>
+
+    <section class="admin9-register-card">
+      <div class="admin9-register-card-head"><div class="admin8-login-logo">SMS</div><div><small>Acceso institucional</small><h2>Solicitud de cuenta</h2></div></div>
+      {% with mensajes = get_flashed_messages(with_categories=true) %}
+      {% for categoria,mensaje in mensajes %}<div class="alert alert-{{ 'warning' if categoria == 'warning' else 'danger' }} py-2">{{ mensaje }}</div>{% endfor %}
+      {% endwith %}
+      <form method="post" class="admin9-register-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <div class="admin9-honeypot" aria-hidden="true"><label>Sitio web</label><input name="website" tabindex="-1" autocomplete="off"></div>
+        <div class="admin9-register-grid">
+          <div><label>Nombres</label><input name="nombres" value="{{ datos.nombres }}" required></div>
+          <div><label>Apellidos</label><input name="apellidos" value="{{ datos.apellidos }}" required></div>
+          <div><label>Cargo o función</label><input name="cargo" value="{{ datos.cargo }}" placeholder="Ej. Docente, Coordinador, Comunicaciones" required></div>
+          <div><label>Correo</label><input type="email" name="correo" value="{{ datos.correo }}" required></div>
+          <div><label>Usuario deseado</label><input name="usuario_web" value="{{ datos.usuario_web }}" pattern="[a-z0-9._-]{4,40}" required placeholder="nombre.apellido"></div>
+          <div><label>Contraseña</label><input type="password" name="clave" minlength="8" required></div>
+          <div class="admin9-register-span"><label>Confirmar contraseña</label><input type="password" name="confirmar_clave" minlength="8" required></div>
+        </div>
+        <label class="admin9-register-check"><input type="checkbox" name="acepta" required><span>Confirmo que pertenezco a la institución o cuento con autorización para solicitar acceso administrativo.</span></label>
+        <button type="submit">Enviar solicitud <i class="bi bi-arrow-right"></i></button>
+      </form>
+      <div class="admin9-register-login">¿Ya tienes una cuenta? <a href="{{ url_for('admin_login') }}">Ingresar</a></div>
+    </section>
+  </main>
+</body>
+</html>

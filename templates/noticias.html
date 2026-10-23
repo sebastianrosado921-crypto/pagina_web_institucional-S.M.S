@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Noticias y Eventos | IED Santa Magdalena Sofía{% endblock %}
+{% block content %}
+<section class="news9-hero">
+  <div class="container position-relative">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb breadcrumb-modern achievements-breadcrumb"><li class="breadcrumb-item"><a href="{{ url_for('inicio') }}">Inicio</a></li><li class="breadcrumb-item active">Actualidad</li></ol></nav>
+    <div class="news9-hero-grid">
+      <div data-reveal><span class="gallery5-kicker"><i class="bi bi-newspaper"></i> Actualidad institucional</span><h1>Noticias, eventos y comunicados que sí vale la pena encontrar.</h1><p>Información publicada y aprobada por los responsables autorizados del portal institucional.</p></div>
+      {% if destacada %}
+      <a class="news9-feature" href="{{ url_for('detalle_noticia', id_noticia=destacada.id_noticia) }}" data-reveal>
+        <div class="news9-feature-media">{% if destacada.imagen_url %}<img src="{{ url_for('static', filename=destacada.imagen_url.replace('/static/','')) if destacada.imagen_url.startswith('/static/') else destacada.imagen_url }}" alt="">{% else %}<i class="bi bi-stars"></i>{% endif %}{% if destacada.video_url %}<span><i class="bi bi-play-fill"></i></span>{% endif %}</div>
+        <div><small>Destacada · {{ destacada.tipo_contenido|title }}</small><strong>{{ destacada.titulo }}</strong><em>{{ destacada.fecha_publicacion.strftime('%d.%m.%Y') if destacada.fecha_publicacion else '' }}</em></div><i class="bi bi-arrow-up-right"></i>
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="news9-tools-section"><div class="container">
+  <form class="news9-tools" method="get">
+    <div><i class="bi bi-search"></i><input type="search" name="q" value="{{ termino }}" placeholder="Buscar en publicaciones..."></div>
+    <select name="tipo"><option value="">Todo el contenido</option>{% for t in ['NOTICIA','EVENTO','COMUNICADO'] %}<option value="{{ t }}" {% if tipo==t %}selected{% endif %}>{{ t|title }}</option>{% endfor %}</select>
+    <button>Buscar</button>{% if termino or tipo %}<a href="{{ url_for('noticias') }}"><i class="bi bi-x-lg"></i></a>{% endif %}
+  </form>
+  <div class="news9-chips"><a class="{% if not tipo %}active{% endif %}" href="{{ url_for('noticias', q=termino) }}">Todos</a>{% for t in ['NOTICIA','EVENTO','COMUNICADO'] %}<a class="{% if tipo==t %}active{% endif %}" href="{{ url_for('noticias', tipo=t, q=termino) }}">{{ t|title }}</a>{% endfor %}<a href="{{ url_for('videos') }}"><i class="bi bi-play-btn"></i> Videos</a></div>
+</div></section>
+
+<section class="news9-list-section"><div class="container">
+  <div class="news9-list-head"><div><span class="modern-kicker">Publicaciones</span><h2>{% if termino %}{{ total }} resultado(s) para “{{ termino }}”{% else %}Última actualidad{% endif %}</h2></div>{% if paginas %}<span>Página {{ pagina }} de {{ paginas }}</span>{% endif %}</div>
+  <div class="news9-grid">
+    {% for item in noticias %}
+    <article class="news9-card" data-reveal>
+      <a class="news9-card-media" href="{{ url_for('detalle_noticia', id_noticia=item.id_noticia) }}">
+        {% if item.imagen_url %}<img src="{{ url_for('static', filename=item.imagen_url.replace('/static/','')) if item.imagen_url.startswith('/static/') else item.imagen_url }}" alt="{{ item.titulo }}" loading="lazy">{% else %}<div class="news9-card-fallback"><i class="bi bi-newspaper"></i></div>{% endif %}
+        <span class="news9-card-type">{{ item.tipo_contenido|title }}</span>{% if item.video_url %}<span class="news9-card-video"><i class="bi bi-play-fill"></i></span>{% endif %}
+      </a>
+      <div class="news9-card-body"><small>{{ item.fecha_publicacion.strftime('%d %b %Y') if item.fecha_publicacion else 'Actualidad' }}</small><h3><a href="{{ url_for('detalle_noticia', id_noticia=item.id_noticia) }}">{{ item.titulo }}</a></h3><p>{{ item.resumen }}</p><a href="{{ url_for('detalle_noticia', id_noticia=item.id_noticia) }}">Abrir publicación <i class="bi bi-arrow-right"></i></a></div>
+    </article>
+    {% else %}<div class="empty-state grid-column-full"><i class="bi bi-search"></i><h3>No encontramos publicaciones</h3><p>Prueba con otro término o filtro.</p></div>{% endfor %}
+  </div>
+
+  {% if paginas > 1 %}<nav class="news-pagination mt-5" aria-label="Paginación">{% if pagina>1 %}<a href="{{ url_for('noticias', page=pagina-1, q=termino, tipo=tipo) }}"><i class="bi bi-arrow-left"></i> Anterior</a>{% else %}<span class="disabled">Anterior</span>{% endif %}<div class="page-dots">{% for n in range(1,paginas+1) %}{% if n==pagina %}<span class="active">{{ n }}</span>{% else %}<a href="{{ url_for('noticias', page=n, q=termino, tipo=tipo) }}">{{ n }}</a>{% endif %}{% endfor %}</div>{% if pagina<paginas %}<a href="{{ url_for('noticias', page=pagina+1, q=termino, tipo=tipo) }}">Siguiente <i class="bi bi-arrow-right"></i></a>{% else %}<span class="disabled">Siguiente</span>{% endif %}</nav>{% endif %}
+</div></section>
+{% endblock %}

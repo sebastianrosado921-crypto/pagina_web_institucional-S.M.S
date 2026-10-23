@@ -1,0 +1,10 @@
+{% extends "admin_base.html" %}
+{% block title %}Mi cuenta | SMS Admin{% endblock %}
+{% block heading %}Mi cuenta{% endblock %}
+{% block content %}
+<div class="admin9-page-head"><div><span>Seguridad</span><h1>Cuenta administrativa.</h1><p>Revisa tu rol y cambia tu contraseña sin modificar la base de datos manualmente.</p></div></div>
+<div class="admin9-account-grid">
+  <section class="admin9-account-card"><span><i class="bi bi-person-badge"></i></span><small>Usuario</small><h2>{{ cuenta.nombres }} {{ cuenta.apellidos }}</h2><p>{{ cuenta.cargo }}</p><div><strong>{{ cuenta.usuario_web }}</strong><em>{{ cuenta.rol_web }}</em></div></section>
+  <form method="post" class="admin9-editor-card"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><span class="admin9-editor-kicker">Contraseña</span><h2>Cambiar contraseña</h2><label>Contraseña actual</label><input type="password" name="clave_actual" required autocomplete="current-password"><label>Nueva contraseña</label><input type="password" name="clave_nueva" minlength="10" required autocomplete="new-password"><label>Confirmar nueva contraseña</label><input type="password" name="confirmar_clave" minlength="10" required autocomplete="new-password"><button class="admin8-primary-btn mt-3"><i class="bi bi-key"></i> Actualizar contraseña</button></form>
+</div>
+{% endblock %}

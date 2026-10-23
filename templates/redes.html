@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Redes y ubicación | IED Santa Magdalena Sofía{% endblock %}
+{% block content %}
+<section class="connect6-hero connect9-hero">
+    <div class="connect6-pattern"></div>
+    <div class="container position-relative">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb breadcrumb-modern achievements-breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('inicio') }}">Inicio</a></li>
+                <li class="breadcrumb-item active">Conecta</li>
+            </ol>
+        </nav>
+        <div class="row g-4 align-items-end">
+            <div class="col-lg-8">
+                <span class="gallery5-kicker"><i class="bi bi-broadcast-pin"></i> Canales digitales</span>
+                <h1>Conecta con Santa Magdalena Sofía.</h1>
+                <p>Redes institucionales, ubicación y canales oficiales reunidos en una experiencia visual más clara y moderna.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-space connect9-page">
+    <div class="container">
+        <div class="connect6-heading connect9-heading" data-reveal>
+            <div><span class="modern-kicker">Canales disponibles</span><h2>Un acceso directo a nuestra comunidad digital.</h2></div>
+        </div>
+
+        <div class="connect9-grid">
+            {% for red in redes %}
+            <a class="connect9-card network-{{ (loop.index0 % 6) + 1 }}" href="{{ red.url_enlace }}" target="_blank" rel="noopener noreferrer" data-reveal>
+                <span class="connect9-ring ring-a"></span><span class="connect9-ring ring-b"></span>
+                <div class="connect9-icon"><i class="bi {{ red.icono or 'bi-link-45deg' }}"></i></div>
+                <div class="connect9-copy"><small>Canal oficial</small><h3>{{ red.plataforma }}</h3><p>Abre este canal en una nueva pestaña y mantente conectado con la institución.</p></div>
+                <div class="connect9-open"><span>Abrir canal</span><i class="bi bi-arrow-up-right"></i></div>
+            </a>
+            {% else %}
+            <div class="empty-state grid-column-full"><i class="bi bi-share"></i><h3>No hay canales cargados</h3><p>Ejecuta el SQL de datos del proyecto.</p></div>
+            {% endfor %}
+        </div>
+
+        <div class="connect6-map-layout connect9-map-layout">
+            <div class="connect6-map-copy" data-reveal>
+                <span class="modern-kicker">Ubicación institucional</span>
+                <h2>Visítanos en Barranquilla.</h2>
+                <p>Consulta nuestra sede principal, abre la ruta en Google Maps o utiliza los canales institucionales de contacto.</p>
+                <div class="connect6-contact-list">
+                    <div><i class="bi bi-geo-alt-fill"></i><span>{{ contacto.direccion if contacto else 'Calle 84B #76-82, Barranquilla, Atlántico' }}</span></div>
+                    {% if contacto and contacto.telefono %}<div><i class="bi bi-telephone-fill"></i><span>{{ contacto.telefono }}</span></div>{% endif %}
+                    {% if contacto and contacto.correo %}<div><i class="bi bi-envelope-fill"></i><span>{{ contacto.correo }}</span></div>{% endif %}
+                </div>
+                <a class="btn home6-map-btn" href="https://www.google.com/maps/search/?api=1&query=Instituci%C3%B3n+Educativa+Distrital+Santa+Magdalena+Sof%C3%ADa%2C+Calle+84B+76-82%2C+Barranquilla" target="_blank" rel="noopener noreferrer"><i class="bi bi-sign-turn-right"></i> Cómo llegar</a>
+            </div>
+            <div class="connect6-map-frame connect9-map-frame" data-reveal>
+                <iframe title="Mapa de ubicación IED Santa Magdalena Sofía" src="https://www.google.com/maps?q=Instituci%C3%B3n%20Educativa%20Distrital%20Santa%20Magdalena%20Sof%C3%ADa%2C%20Calle%2084B%2076-82%2C%20Barranquilla%2C%20Atl%C3%A1ntico&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

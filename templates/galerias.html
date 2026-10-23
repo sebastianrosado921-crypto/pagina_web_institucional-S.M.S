@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Galería institucional | IED Santa Magdalena Sofía{% endblock %}
+
+{% block content %}
+<section class="gallery5-hero">
+    <div class="gallery5-hero-pattern"></div>
+    <div class="container position-relative">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb breadcrumb-modern achievements-breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('inicio') }}">Inicio</a></li>
+                <li class="breadcrumb-item active">Galería</li>
+            </ol>
+        </nav>
+        <div class="row align-items-end g-4">
+            <div class="col-lg-8">
+                <span class="gallery5-kicker"><i class="bi bi-camera"></i> Memoria visual institucional</span>
+                <h1>La vida del colegio, contada en imágenes.</h1>
+                <p>Experiencias académicas, culturales, ambientales, deportivas y comunitarias que construyen nuestra historia.</p>
+            </div>
+            <div class="col-lg-4">
+                <div class="gallery5-total"><strong>{{ total }}</strong><span>álbumes disponibles</span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="gallery5-filter">
+    <div class="container">
+        <div class="gallery5-filter-row">
+            <span>Filtrar por:</span>
+            <a class="{% if not tipo %}active{% endif %}" href="{{ url_for('galerias') }}">Todos</a>
+            {% for item in tipos %}
+            <a class="{% if tipo == item %}active{% endif %}" href="{{ url_for('galerias', tipo=item) }}">{{ item }}</a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="section-space gallery5-page">
+    <div class="container">
+        <div class="gallery5-heading">
+            <div>
+                <span class="modern-kicker">Álbumes institucionales</span>
+                <h2>Explora nuestros momentos.</h2>
+            </div>
+        </div>
+
+        <div class="gallery5-album-grid">
+            {% for galeria in galerias %}
+            <a class="gallery5-album-card" href="{{ url_for('detalle_galeria', id_galeria=galeria.id_galeria) }}">
+                <div class="gallery5-album-cover">
+                    {% if galeria.portada %}
+                    <img src="{{ url_for('static', filename=galeria.portada.replace('/static/', '')) if galeria.portada.startswith('/static/') else galeria.portada }}"
+                         alt="{{ galeria.nombre }}" loading="lazy">
+                    {% else %}
+                    <div class="gallery5-empty-cover"><i class="bi bi-images"></i></div>
+                    {% endif %}
+                    <span class="gallery5-count"><i class="bi bi-images"></i> {{ galeria.total_imagenes }}</span>
+                </div>
+                <div class="gallery5-album-body">
+                    <span>{{ galeria.tipo or 'Institucional' }}</span>
+                    <h3>{{ galeria.nombre }}</h3>
+                    <p>{{ galeria.descripcion or 'Colección de momentos institucionales.' }}</p>
+                    <div><strong>Abrir álbum</strong><i class="bi bi-arrow-up-right"></i></div>
+                </div>
+            </a>
+            {% else %}
+            <div class="empty-state grid-column-full">
+                <i class="bi bi-images"></i>
+                <h3>No hay galerías disponibles</h3>
+                <p>Ejecuta el SQL de la Entrega 5.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

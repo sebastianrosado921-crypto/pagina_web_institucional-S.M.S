@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}{{ logro.titulo }} | IED Santa Magdalena Sofía{% endblock %}
+
+{% block content %}
+
+<section class="achievement-detail-hero">
+    <div class="achievement-detail-lines"></div>
+    <div class="container position-relative">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb breadcrumb-modern achievements-breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('inicio') }}">Inicio</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('logros') }}">Logros</a></li>
+                <li class="breadcrumb-item active">Detalle</li>
+            </ol>
+        </nav>
+
+        <div class="achievement-detail-heading">
+            <span class="achievement-kicker">
+                <i class="bi bi-award"></i> {{ logro.categoria or 'Reconocimiento institucional' }}
+            </span>
+
+            <h1>{{ logro.titulo }}</h1>
+
+            <div class="achievement-detail-meta">
+                {% if logro.fecha_logro %}
+                <span><i class="bi bi-calendar3"></i> {{ logro.fecha_logro.strftime('%d/%m/%Y') }}</span>
+                {% endif %}
+                <span><i class="bi bi-building"></i> IED Santa Magdalena Sofía</span>
+                <span><i class="bi bi-geo-alt"></i> Barranquilla</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="achievement-detail-section">
+    <div class="container">
+        <div class="achievement-detail-layout">
+
+            <article class="achievement-detail-main">
+                <div class="achievement-detail-symbol">
+                    <i class="bi bi-trophy-fill"></i>
+                </div>
+
+                <span class="modern-kicker">Descripción del reconocimiento</span>
+                <p class="achievement-detail-lead">{{ logro.descripcion }}</p>
+
+                <div class="achievement-detail-note">
+                    <i class="bi bi-stars"></i>
+                    <div>
+                        <strong>Orgullo de nuestra comunidad</strong>
+                        <p>
+                            Este reconocimiento forma parte de la memoria institucional y
+                            visibiliza procesos, experiencias y resultados que aportan al
+                            desarrollo integral de la comunidad educativa.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="achievement-detail-values">
+                    <div>
+                        <span><i class="bi bi-check2-circle"></i></span>
+                        <strong>Esfuerzo</strong>
+                        <small>Reconocer la constancia y el compromiso.</small>
+                    </div>
+                    <div>
+                        <span><i class="bi bi-people"></i></span>
+                        <strong>Comunidad</strong>
+                        <small>Valorar el trabajo colectivo y la participación.</small>
+                    </div>
+                    <div>
+                        <span><i class="bi bi-graph-up-arrow"></i></span>
+                        <strong>Progreso</strong>
+                        <small>Hacer visible el crecimiento institucional.</small>
+                    </div>
+                </div>
+            </article>
+
+            <aside class="achievement-detail-aside">
+                <div class="achievement-aside-card">
+                    <span class="modern-kicker">Otros reconocimientos</span>
+                    <h2>También te puede interesar</h2>
+
+                    {% for item in relacionados %}
+                    <a href="{{ url_for('detalle_logro', id_logro=item.id_logro) }}">
+                        <span class="aside-medal"><i class="bi bi-award"></i></span>
+                        <div>
+                            <small>{{ item.categoria or 'Institucional' }}</small>
+                            <strong>{{ item.titulo }}</strong>
+                        </div>
+                        <i class="bi bi-arrow-up-right"></i>
+                    </a>
+                    {% endfor %}
+
+                    <a class="achievement-view-all" href="{{ url_for('logros') }}">
+                        Ver todos los logros <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </aside>
+        </div>
+
+        <div class="article-navigation">
+            {% if anterior %}
+            <a href="{{ url_for('detalle_logro', id_logro=anterior.id_logro) }}">
+                <span><i class="bi bi-arrow-left"></i> Anterior</span>
+                <strong>{{ anterior.titulo }}</strong>
+            </a>
+            {% else %}
+            <span></span>
+            {% endif %}
+
+            {% if siguiente %}
+            <a class="text-end" href="{{ url_for('detalle_logro', id_logro=siguiente.id_logro) }}">
+                <span>Siguiente <i class="bi bi-arrow-right"></i></span>
+                <strong>{{ siguiente.titulo }}</strong>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}
